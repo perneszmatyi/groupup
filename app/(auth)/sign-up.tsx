@@ -4,6 +4,9 @@ import { router } from 'expo-router';
 import NameStep from '../../components/auth/NameStep';
 import EmailStep from '../../components/auth/EmailStep';
 import PasswordStep from '../../components/auth/PasswordStep';
+import { auth } from '../../firebaseConfig';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+
 
 const SignUp = () => {
   const [step, setStep] = useState(1);
@@ -23,14 +26,21 @@ const SignUp = () => {
     }
   };
 
-  const handleNextStep = () => {
+  const handleNextStep = async () => {
     if (step < 3) {
       setStep(step + 1);
     } else {
-      // Here you would typically send the data to your backend
-      console.log('Sign up data:', formData);
-      // Navigate to the main app
-      router.replace('/(tabs)/group');
+      console.log('Attempting to create user...'); // Debug log
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+        console.log('Sign up successful:', userCredential.user.uid); // Log the new user's UID
+        router.replace('/(tabs)/group');
+      } catch (error: any) {
+        console.error('Sign up error:', error);
+        if (error.code) console.error('Error code:', error.code);
+        if (error.message) console.error('Error message:', error.message);
+        // Handle the error (e.g., show an error message to the user)
+      }
     }
   };
 

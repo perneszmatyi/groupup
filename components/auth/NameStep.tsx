@@ -14,11 +14,13 @@ const NameStep: React.FC<NameStepProps> = ({ firstName, lastName, updateFormData
         className="w-full bg-gray-100 rounded-md p-2 mb-4"
         placeholder="First Name"
         value={firstName}
+        autoCapitalize="none"
         onChangeText={(text) => updateFormData({ firstName: text, lastName })}
       />
       <TextInput
         className="w-full bg-gray-100 rounded-md p-2 mb-4"
         placeholder="Last Name"
+        autoCapitalize="none"
         value={lastName}
         onChangeText={(text) => updateFormData({ firstName, lastName: text })}
       />
