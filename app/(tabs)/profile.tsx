@@ -3,24 +3,16 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
 import { auth } from '../../firebaseConfig';
 import { onAuthStateChanged, User, signOut } from 'firebase/auth';
+import { useAppContext } from '@/context/AppContext';
 
 const ProfileScreen = () => {
-  const [user, setUser] = useState<User | null>(null);
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-    });
-    return unsubscribe;
-  }, []);
+  const { handleLogout, user } = useAppContext();
 
-  const handleLogout = () => {
-    signOut(auth).then(() => {
-      router.replace('/');
-    }).catch((error: any) => {
-      console.error('Logout error:', error);
-    });
-  };
+  const handleTest = () => {
+    console.log(user)
+  }
+  
 
   return (
     <View className="flex-1 items-center justify-center bg-white">

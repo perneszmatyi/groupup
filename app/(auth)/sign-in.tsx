@@ -3,14 +3,17 @@ import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
 import { auth } from '../../firebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { useAppContext } from '@/context/AppContext';
 
 const SignIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { setUser } = useAppContext();
 
   const handleSignIn = async () => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      setUser(userCredential.user);
       console.log('Sign in successful:', userCredential);
       router.replace('/(tabs)/group');
     } catch (error) {
