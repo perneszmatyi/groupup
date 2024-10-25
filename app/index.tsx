@@ -17,6 +17,11 @@ const WelcomeScreen = () => {
             <Text className="text-white text-center font-semibold">Sign Up</Text>
           </TouchableOpacity>
         </Link>
+        <Link href="/(tabs)/group" asChild>
+          <TouchableOpacity className="bg-green-500 py-3 px-6 rounded-full">
+            <Text className="text-white text-center font-semibold">go to groups</Text>
+          </TouchableOpacity>
+        </Link>
       </View>
     </View>
   );

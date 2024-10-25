@@ -9,9 +9,7 @@ const ProfileScreen = () => {
 
   const { handleLogout, user } = useAppContext();
 
-  const handleTest = () => {
-    console.log(user)
-  }
+
   
 
   return (

@@ -17,7 +17,6 @@ const SignUp = () => {
     password: '',
     confirmPassword: '',
   });
-  const { setUser } = useAppContext();
   const handlePreviousStep = () => {
     if (step > 1) {
       setStep(step - 1);
@@ -33,7 +32,6 @@ const SignUp = () => {
       console.log('Attempting to create user...'); // Debug log
       try {
         const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
-        setUser(userCredential.user);
         console.log('Sign up successful:', userCredential.user.uid); // Log the new user's UID
         router.replace('/(tabs)/group');
       } catch (error: any) {

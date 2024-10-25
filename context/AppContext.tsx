@@ -2,7 +2,9 @@ import React, { createContext, useState, useContext, ReactNode } from 'react';
 import { User } from 'firebase/auth';
 import { auth } from '../firebaseConfig';
 import { signOut } from 'firebase/auth';
-import { router } from 'expo-router';
+import { useEffect } from 'react';
+import { onAuthStateChanged } from 'firebase/auth';
+
 
 type AppContextType = {
   user: User | null;
@@ -27,19 +29,22 @@ type AppProviderProps = {
 }
 
 export const AppProvider = ({ children }: AppProviderProps) => {
-  const [user, setUser] = useState<User | null>(null);
-
-  const handleLogout = () => {
-    signOut(auth).then(() => {
-      router.replace('/');
-    }).catch((error: any) => {
-      console.error('Logout error:', error);
-    });
+    const [user, setUser] = useState<User | null>(null);
+  
+    // Keeps track of the current user's auth state
+    useEffect(() => {
+      const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+        setUser(firebaseUser);
+      });
+  
+      return () => unsubscribe();
+    }, []);
+  
+    const handleLogout = () => signOut(auth);
+  
+    return (
+      <AppContext.Provider value={{ user, setUser, handleLogout }}>
+        {children}
+      </AppContext.Provider>
+    );
   };
-
-  return (
-    <AppContext.Provider value={{ user, setUser, handleLogout }}>
-      {children}
-    </AppContext.Provider>
-  );
-};
