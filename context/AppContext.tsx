@@ -34,6 +34,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     // Keeps track of the current user's auth state
     useEffect(() => {
       const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+        console.log("auth state:", auth);
         setUser(firebaseUser);
       });
   

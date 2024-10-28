@@ -11,7 +11,6 @@ const SignIn = () => {
   const handleSignIn = async () => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      console.log('Sign in successful:', userCredential);
       router.replace('/(tabs)/group');
     } catch (error) {
       console.error('Sign in error:', error);

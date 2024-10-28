@@ -1,30 +1,31 @@
-import { Stack } from 'expo-router';
+import { Slot, useSegments, useRouter } from 'expo-router';
+import { useEffect } from 'react';
 import 'react-native-reanimated';
 import '../global.css';
 import { AppProvider, useAppContext } from '@/context/AppContext';
 
-function StackScreens() {
+function RootLayoutNav() {
   const { user } = useAppContext();
+  const segments = useSegments();
+  const router = useRouter();
 
-  return (
-    <Stack>
-      {user ? (
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      ) : (
-        <>
-          <Stack.Screen name="(auth)/sign-in" options={{ headerShown: false }} />
-          <Stack.Screen name="(auth)/sign-up" options={{ headerShown: false }} />
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-        </>
-      )}
-    </Stack>
-  );
+  useEffect(() => {
+    const inAuthGroup = segments[0] === '(auth)';
+
+    if (!user && !inAuthGroup) {
+      router.replace('/sign-in');
+    } else if (user && inAuthGroup) {
+      router.replace('/(tabs)/group');
+    }
+  }, [user, segments]);
+
+  return <Slot />;
 }
 
 export default function RootLayout() {
   return (
     <AppProvider>
-      <StackScreens />
+      <RootLayoutNav />
     </AppProvider>
   );
 }
