@@ -7,6 +7,7 @@ import PasswordStep from '../../components/auth/PasswordStep';
 import { auth } from '../../firebaseConfig';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { useAppContext } from '@/context/AppContext';
+import { createFirestoreUser } from '@/src/firebase/firestore/users';
 
 const SignUp = () => {
   const [step, setStep] = useState(1);
@@ -29,16 +30,21 @@ const SignUp = () => {
     if (step < 3) {
       setStep(step + 1);
     } else {
-      console.log('Attempting to create user...'); // Debug log
+      console.log('Attempting to create user...');
       try {
         const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
-        console.log('Sign up successful:', userCredential.user.uid); // Log the new user's UID
+        await createFirestoreUser(userCredential.user.uid, {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          profilePicture: '',
+        });
         router.replace('/(tabs)/group');
       } catch (error: any) {
         console.error('Sign up error:', error);
         if (error.code) console.error('Error code:', error.code);
         if (error.message) console.error('Error message:', error.message);
-        // Handle the error (e.g., show an error message to the user)
+
       }
     }
   };

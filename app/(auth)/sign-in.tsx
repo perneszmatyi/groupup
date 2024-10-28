@@ -10,7 +10,7 @@ const SignIn = () => {
 
   const handleSignIn = async () => {
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password)
       router.replace('/(tabs)/group');
     } catch (error) {
       console.error('Sign in error:', error);
@@ -18,7 +18,7 @@ const SignIn = () => {
   };
 
   const handleBack = () => {
-    router.back();
+    router.replace('/');
   };
 
   return (
@@ -44,7 +44,7 @@ const SignIn = () => {
         className="bg-gray-300 rounded-md py-2 px-4 mb-4"
         onPress={handleBack}
       >
-        <Text className="font-bold text-black text-lg">Back</Text>
+        <Text className="font-bold text-black text-lg">Home</Text>
         </TouchableOpacity>
         <TouchableOpacity
           className="bg-blue-500 rounded-md py-2 px-4 mb-4"
