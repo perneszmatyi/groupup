@@ -15,7 +15,7 @@ export interface GroupData {
   createdAt: Date;
   members: Record<string, boolean>;  
   inviteCode: string;
-  photo: string;           
+  photo?: string;           
   isActive: boolean;           
 }
 

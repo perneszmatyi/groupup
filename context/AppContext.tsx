@@ -60,12 +60,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
               }
               
               const newData = doc.data() as UserData;
-              setUser(prev => {
-                if (JSON.stringify(prev) === JSON.stringify(newData)) {
-                  return prev;
-                }
-                return newData;
-              });
+              setUser(newData);
             },
             (error) => {
               console.error('User listener error:', error);
