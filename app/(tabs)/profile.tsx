@@ -3,11 +3,13 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
 import { auth } from '../../firebaseConfig';
 import { onAuthStateChanged, User, signOut } from 'firebase/auth';
-import { useAppContext } from '@/context/AppContext';
+import { useAuthContext } from '@/context/AuthContext';
+import { useUserContext } from '@/context/UserContext';
 
 const ProfileScreen = () => {
 
-  const { handleLogout, user } = useAppContext();
+  const { handleLogout } = useAuthContext();
+  const { user } = useUserContext();
 
 
 

@@ -1,12 +1,12 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import NoGroup from '../../components/screens/NoGroup';
-import { useAppContext } from '@/context/AppContext';
+import { useUserContext } from '@/context/UserContext';
 
 
 
 const GroupScreen = () => {
-  const { user } = useAppContext();
+  const { user } = useUserContext();
 
 
   return (

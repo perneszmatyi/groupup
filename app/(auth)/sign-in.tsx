@@ -3,10 +3,12 @@ import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
 import { auth } from '../../firebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { useAuthContext } from '@/context/AuthContext';
 
 const SignIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { userAuth, handleLogout } = useAuthContext();
 
   const handleSignIn = async () => {
     try {

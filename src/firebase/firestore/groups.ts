@@ -56,3 +56,10 @@ export const createFirestoreGroup = async (
     throw error;
   }
 };
+
+
+export const getGroupByCreatorId = async (creatorId: string) => {
+  const q = query(collection(db, 'groups'), where('createdBy', '==', creatorId));
+  const querySnapshot = await getDocs(q);
+  return querySnapshot.docs.map((doc) => doc.data());
+};

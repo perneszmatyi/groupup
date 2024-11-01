@@ -2,10 +2,12 @@ import { Slot, useSegments, useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 import '../global.css';
-import { AppProvider, useAppContext } from '@/context/AppContext';
+import { AuthProvider } from '@/context/AuthContext';
+import { UserProvider } from '@/context/UserContext';
+import { useAuthContext } from '@/context/AuthContext';
 
 function RootLayoutNav() {
-  const { userAuth } = useAppContext();
+  const { userAuth } = useAuthContext();
   const segments = useSegments();
   const router = useRouter();
 
@@ -24,8 +26,10 @@ function RootLayoutNav() {
 
 export default function RootLayout() {
   return (
-    <AppProvider>
-      <RootLayoutNav />
-    </AppProvider>
+    <AuthProvider>
+      <UserProvider>
+        <RootLayoutNav />
+      </UserProvider>
+    </AuthProvider>
   );
 }
