@@ -1,4 +1,4 @@
-import { collection, doc, writeBatch, query, where, getDocs } from 'firebase/firestore';
+import { collection, doc, writeBatch, query, where, getDocs, updateDoc, getDoc } from 'firebase/firestore';
 import { db } from '../../../firebaseConfig';
 import { GroupData } from './types';
 
@@ -57,6 +57,77 @@ export const createFirestoreGroup = async (
   }
 };
 
+
+export const fetchActiveGroups = async (userId: string) => {
+  const q = query(
+    collection(db, 'groups'),
+    where('isActive', '==', true),
+    where(`members.${userId}`, '==', null)
+  );
+  const querySnapshot = await getDocs(q);
+  return querySnapshot.docs.map((doc) => doc.data());
+};
+
+
+export const getGroupByInviteCode = async (inviteCode: string) => {
+  try {
+    if (!inviteCode) {
+      throw new Error('Invite code is required');
+    }
+
+    const q = query(collection(db, 'groups'), where('inviteCode', '==', inviteCode));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map((doc) => ({
+      ...doc.data(),
+      id: doc.id
+    }));
+  } catch (error) {
+    console.error('Error getting group by invite code:', error);
+    throw error;
+  }
+};
+
+export const joinGroup = async (userId: string, groupId: string) => {
+  try {
+    if (!userId || !groupId) {
+      throw new Error('User ID and Group ID are required');
+    }
+
+    const batch = writeBatch(db);
+    
+    const groupRef = doc(db, 'groups', groupId);
+    const groupDoc = await getDoc(groupRef);
+    if (!groupDoc.exists()) {
+      throw new Error('Group not found');
+    }
+
+    // Verify user exists
+    const userRef = doc(db, 'users', userId);
+    const userDoc = await getDoc(userRef);
+    if (!userDoc.exists()) {
+      throw new Error('User not found');
+    }
+
+    // Check if user is already in group
+    const groupData = groupDoc.data();
+    if (groupData.members && groupData.members[userId]) {
+      throw new Error('User is already a member of this group');
+    }
+
+    batch.update(groupRef, {
+      [`members.${userId}`]: true
+    });
+
+    batch.update(userRef, {
+      currentGroup: groupId
+    });
+
+    await batch.commit();
+  } catch (error) {
+    console.error('Error joining group:', error);
+    throw error;
+  }
+};
 
 export const getGroupByCreatorId = async (creatorId: string) => {
   const q = query(collection(db, 'groups'), where('createdBy', '==', creatorId));

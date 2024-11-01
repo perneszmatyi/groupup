@@ -4,6 +4,7 @@ import 'react-native-reanimated';
 import '../global.css';
 import { AuthProvider } from '@/context/AuthContext';
 import { UserProvider } from '@/context/UserContext';
+import { GroupProvider } from '@/context/GroupContext';
 import { useAuthContext } from '@/context/AuthContext';
 
 function RootLayoutNav() {
@@ -28,7 +29,9 @@ export default function RootLayout() {
   return (
     <AuthProvider>
       <UserProvider>
-        <RootLayoutNav />
+        <GroupProvider>
+          <RootLayoutNav />
+        </GroupProvider>
       </UserProvider>
     </AuthProvider>
   );

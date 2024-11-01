@@ -40,8 +40,3 @@ export const getUserData = async (uid: string): Promise<UserData | null> => {
     throw error;
   }
 };
-
-export const updateUserCurrentGroup = async (uid: string, groupId: string | null) => {
-  const userDocRef = doc(db, 'users', uid);
-  await updateDoc(userDocRef, { currentGroup: groupId });
-};

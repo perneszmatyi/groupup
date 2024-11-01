@@ -6,8 +6,8 @@ import EmailStep from '../../components/auth/EmailStep';
 import PasswordStep from '../../components/auth/PasswordStep';
 import { auth } from '../../firebaseConfig';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { useAppContext } from '@/context/AppContext';
 import { createFirestoreUser } from '@/src/firebase/firestore/users';
+
 
 const SignUp = () => {
   const [step, setStep] = useState(1);

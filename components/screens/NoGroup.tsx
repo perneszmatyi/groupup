@@ -11,6 +11,10 @@ const NoGroup = () => {
       router.push('/group/createGroup');
     }
 
+    const handleJoinGroup = () => {
+      router.push('/group/joinGroup');
+    } 
+
   return (
     <View className="flex-1 items-center justify-center">
       <View className="w-full px-10">
@@ -20,7 +24,7 @@ const NoGroup = () => {
         <TouchableOpacity className="bg-blue-500 px-6 py-2 rounded-md w-40" onPress={handleCreateGroup}>
           <Text className="text-white font-semibold text-center">Create Group</Text>
         </TouchableOpacity>
-        <TouchableOpacity className="bg-green-500 px-6 py-2 rounded-md w-40" >
+        <TouchableOpacity className="bg-green-500 px-6 py-2 rounded-md w-40" onPress={handleJoinGroup}>
           <Text className="text-white font-semibold text-center">Join Group</Text>
         </TouchableOpacity>
       </View>
