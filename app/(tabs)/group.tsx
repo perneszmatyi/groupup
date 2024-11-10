@@ -7,7 +7,7 @@ import { useGroupContext } from '@/context/GroupContext';
 
 const GroupScreen = () => {
   const { user } = useUserContext();
-  const { group } = useGroupContext();
+  const { currentGroup } = useGroupContext();
 
   return (
     (!user?.currentGroup) ? (
@@ -19,9 +19,9 @@ const GroupScreen = () => {
     <View className="flex-1 items-center bg-white">
       <Text className="text-2xl font-bold">Groups</Text>
       <View className="flex-1 items-center justify-center">
-        <Text className="text-lg">{group?.name}</Text>
-        <Text className="text-lg">{group?.description}</Text>
-        <Text className="text-lg font-bold">{group?.inviteCode}</Text>
+        <Text className="text-lg">{currentGroup?.name}</Text>
+        <Text className="text-lg">{currentGroup?.description}</Text>
+        <Text className="text-lg font-bold">{currentGroup?.inviteCode}</Text>
       </View>
     </View>
   )

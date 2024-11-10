@@ -90,7 +90,7 @@ export const GroupProvider = ({ children }: GroupProviderProps) => {
 
   // Fetch available groups
   const loadAvailableGroups = async () => {
-    if (!userAuth?.uid) {
+    if (!userAuth?.uid || !user?.currentGroup) {
       setAvailableGroups([]);
       setIsLoading(false);
       return;
@@ -100,7 +100,7 @@ export const GroupProvider = ({ children }: GroupProviderProps) => {
     setError(null);
 
     try {
-      const groups = await fetchActiveGroups(userAuth.uid);
+      const groups = await fetchActiveGroups(userAuth.uid, user.currentGroup);
       setAvailableGroups(groups);
     } catch (error) {
       console.error('Error fetching active groups:', error);
@@ -114,7 +114,7 @@ export const GroupProvider = ({ children }: GroupProviderProps) => {
   // Load available groups on auth change
   useEffect(() => {
     loadAvailableGroups();
-  }, [userAuth?.uid]);
+  }, [userAuth?.uid, currentGroup?.id]);
 
   const handleJoinGroup = async (inviteCode: string) => {
     if (!userAuth?.uid) {

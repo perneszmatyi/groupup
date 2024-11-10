@@ -17,6 +17,9 @@ export interface GroupData {
   members: Record<string, boolean>;  
   inviteCode: string;
   photo?: string;           
-  isActive: boolean;           
+  isActive: boolean;     
+  likes?: Record<string, boolean>;
+  passes?: Record<string, boolean>;
+  matches?: Record<string, boolean>;
 }
 

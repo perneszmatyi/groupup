@@ -1,12 +1,50 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import NoGroup from '../../components/screens/NoGroup';
 import { useUserContext } from '@/context/UserContext';
 import { useGroupContext } from '@/context/GroupContext';
+import { handleLike, handlePass } from '@/src/firebase/firestore/groups';
+import { useAuthContext } from '@/context/AuthContext';
 
 const SwipeScreen = () => {
   const { user } = useUserContext();
-  const { availableGroups, isLoading, error, handleJoinGroup } = useGroupContext();
+  const { currentGroup, availableGroups, isLoading, error, refreshGroups } = useGroupContext();
+  const { userAuth } = useAuthContext();
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const isAdmin = currentGroup && userAuth?.uid === currentGroup.createdBy;
+
+  const onLike = async (targetGroupId: string) => {
+    if (!currentGroup?.id || isProcessing) return;
+    
+    setIsProcessing(true);
+    try {
+      const isMatch = await handleLike(currentGroup.id, targetGroupId);
+      if (isMatch) {
+        console.log("It's a match!");
+        // Optional: Add some UI feedback for match
+      }
+      refreshGroups();
+    } catch (error) {
+      console.error('Error liking group:', error);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const onPass = async (targetGroupId: string) => {
+    if (!currentGroup?.id || isProcessing) return;
+
+    setIsProcessing(true);
+    try {
+      await handlePass(currentGroup.id, targetGroupId);
+      refreshGroups();
+    } catch (error) {
+      console.error('Error passing group:', error);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
   const renderGroups = () => {
     if (isLoading) {
@@ -34,9 +72,23 @@ const SwipeScreen = () => {
             </Text>
             <Text className="text-gray-600 mb-4">{group.description}</Text>
             
-              <Text className="text-white text-center font-semibold">
-                Join Group
-              </Text>
+            <View className="flex-row justify-around mt-4">
+              <TouchableOpacity 
+                className="bg-red-500 p-4 rounded-full"
+                onPress={() => onPass(group.id)}
+                disabled={isProcessing}
+              >
+                <Text className="text-white font-bold">✕</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                className="bg-green-500 p-4 rounded-full"
+                onPress={() => onLike(group.id)}
+                disabled={isProcessing}
+              >
+                <Text className="text-white font-bold">✓</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         ))}
       </ScrollView>

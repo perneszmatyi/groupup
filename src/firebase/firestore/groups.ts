@@ -21,7 +21,7 @@ const generateUniqueInviteCode = async () => {
 };
 
 export const createFirestoreGroup = async (
-  groupData: Omit<GroupData, 'inviteCode' | 'isActive' | 'createdAt' | 'members'>
+  groupData: Omit<GroupData, 'inviteCode' | 'isActive' | 'createdAt' | 'members' >
 ) => {
   try {
     const batch = writeBatch(db);
@@ -36,7 +36,10 @@ export const createFirestoreGroup = async (
       createdAt: new Date(),
       members: {
         [groupData.createdBy]: true
-      }
+      },
+      likes: {},
+      passes: {},
+      matches: {}
     };
 
     batch.set(newGroupRef, groupDoc);
@@ -57,10 +60,17 @@ export const createFirestoreGroup = async (
   }
 };
 
-
-export const fetchActiveGroups = async (userId: string): Promise<GroupData[]> => {
+export const fetchActiveGroups = async (
+  userId: string,
+  currentGroupId: string
+): Promise<GroupData[]> => {
   try {
-    // First get all active groups
+    // Get current group's data to check likes/passes/matches
+    const currentGroupRef = doc(db, 'groups', currentGroupId);
+    const currentGroupDoc = await getDoc(currentGroupRef);
+    const currentGroupData = currentGroupDoc.data() as GroupData;
+
+    // Get all active groups
     const q = query(
       collection(db, 'groups'),
       where('isActive', '==', true)
@@ -73,13 +83,18 @@ export const fetchActiveGroups = async (userId: string): Promise<GroupData[]> =>
         id: doc.id,
         ...doc.data()
       } as GroupData))
-      .filter(group => !group.members[userId]); // Filter out groups user is already in
+      .filter(group => 
+        group.id !== currentGroupId && // Not own group
+        !group.members[userId] && // Not a member
+        !currentGroupData.likes?.[group.id] && // Haven't liked
+        !currentGroupData.passes?.[group.id] && // Haven't passed
+        !currentGroupData.matches?.[group.id] // Haven't matched
+      );
   } catch (error) {
     console.error('Error fetching active groups:', error);
     throw error;
   }
 };
-
 
 export const getGroupByInviteCode = async (inviteCode: string) => {
   try {
@@ -154,3 +169,63 @@ export const getGroupByCreatorId = async (creatorId: string): Promise<GroupData[
     throw error;
   }
 };
+
+export const handleLike = async (
+  currentGroupId: string, 
+  targetGroupId: string
+): Promise<boolean> => {  // Returns true if it's a match
+  try {
+    const batch = writeBatch(db);
+    
+    // Get both groups
+    const currentGroupRef = doc(db, 'groups', currentGroupId);
+    const targetGroupRef = doc(db, 'groups', targetGroupId);
+    
+    // Get target group data to check if they already liked current group
+    const targetGroupDoc = await getDoc(targetGroupRef);
+    const targetGroupData = targetGroupDoc.data() as GroupData;
+
+    // Store the like
+    batch.update(currentGroupRef, {
+      [`likes.${targetGroupId}`]: true
+    });
+
+    // If target group already liked current group, create match
+    if (targetGroupData.likes?.[currentGroupId]) {
+      batch.update(currentGroupRef, {
+        [`matches.${targetGroupId}`]: true
+      });
+      batch.update(targetGroupRef, {
+        [`matches.${currentGroupId}`]: true
+      });
+      await batch.commit();
+      return true; // It's a match
+    }
+
+    // If no match, just save the like
+    await batch.commit();
+    return false;
+  } catch (error) {
+    console.error('Error handling like:', error);
+    throw error;
+  }
+};
+
+export const handlePass = async (
+  currentGroupId: string, 
+  targetGroupId: string
+): Promise<void> => {
+  try {
+    const groupRef = doc(db, 'groups', currentGroupId);
+    await updateDoc(groupRef, {
+      [`passes.${targetGroupId}`]: true
+    });
+  } catch (error) {
+    console.error('Error handling pass:', error);
+    throw error;
+  }
+};
+
+
+
+
