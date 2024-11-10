@@ -9,6 +9,7 @@ export interface UserData {
 }
 
 export interface GroupData {
+  id: string;
   name: string;
   description: string;
   createdBy: string;       

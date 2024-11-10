@@ -58,14 +58,26 @@ export const createFirestoreGroup = async (
 };
 
 
-export const fetchActiveGroups = async (userId: string) => {
-  const q = query(
-    collection(db, 'groups'),
-    where('isActive', '==', true),
-    where(`members.${userId}`, '==', null)
-  );
-  const querySnapshot = await getDocs(q);
-  return querySnapshot.docs.map((doc) => doc.data());
+export const fetchActiveGroups = async (userId: string): Promise<GroupData[]> => {
+  try {
+    // First get all active groups
+    const q = query(
+      collection(db, 'groups'),
+      where('isActive', '==', true)
+    );
+    const querySnapshot = await getDocs(q);
+    
+    // Filter and transform the data
+    return querySnapshot.docs
+      .map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      } as GroupData))
+      .filter(group => !group.members[userId]); // Filter out groups user is already in
+  } catch (error) {
+    console.error('Error fetching active groups:', error);
+    throw error;
+  }
 };
 
 
@@ -129,8 +141,16 @@ export const joinGroup = async (userId: string, groupId: string) => {
   }
 };
 
-export const getGroupByCreatorId = async (creatorId: string) => {
-  const q = query(collection(db, 'groups'), where('createdBy', '==', creatorId));
-  const querySnapshot = await getDocs(q);
-  return querySnapshot.docs.map((doc) => doc.data());
+export const getGroupByCreatorId = async (creatorId: string): Promise<GroupData[]> => {
+  try {
+    const q = query(collection(db, 'groups'), where('createdBy', '==', creatorId));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data()
+    }) as GroupData);
+  } catch (error) {
+    console.error('Error getting group by creator ID:', error);
+    throw error;
+  }
 };

@@ -18,6 +18,7 @@ const ProfileScreen = () => {
       <Text className="text-2xl font-bold">Profile</Text>
       <Text className="mt-2 text-gray-600">Your profile information</Text>
       <Text className="mt-2 text-gray-600">{user?.firstName}</Text>
+      <Text className="mt-2 text-gray-600">{user?.lastName}</Text>
       <TouchableOpacity 
         className="bg-red-500 p-2 rounded-md mt-4" 
         onPress={handleLogout}
