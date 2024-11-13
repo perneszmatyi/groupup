@@ -4,13 +4,14 @@ import { createContext, useContext, ReactNode, useState, useEffect } from 'react
 import { useUserContext } from './UserContext';
 import { db } from '@/firebaseConfig';
 import { onSnapshot } from 'firebase/firestore';
-import { fetchActiveGroups } from '@/src/firebase/firestore/groups';
+import { fetchActiveGroups, fetchMatchedGroups } from '@/src/firebase/firestore/groups';
 import { useAuthContext } from './AuthContext';
 import { joinGroup, getGroupByInviteCode } from '@/src/firebase/firestore/groups';
 
 type GroupContextState = {
   currentGroup: GroupData | null;
   availableGroups: GroupData[];
+  matchedGroups: GroupData[];
   isLoading: boolean;
   error: string | null;
 }
@@ -37,6 +38,7 @@ type GroupProviderProps = {
 export const GroupProvider = ({ children }: GroupProviderProps) => {
   const [currentGroup, setCurrentGroup] = useState<GroupData | null>(null);
   const [availableGroups, setAvailableGroups] = useState<GroupData[]>([]);
+  const [matchedGroups, setMatchedGroups] = useState<GroupData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
@@ -142,10 +144,30 @@ export const GroupProvider = ({ children }: GroupProviderProps) => {
     }
   };
 
+  // Add effect to load matched groups
+  useEffect(() => {
+    const loadMatchedGroups = async () => {
+      if (!currentGroup?.id) {
+        setMatchedGroups([]);
+        return;
+      }
+
+      try {
+        const groups = await fetchMatchedGroups(currentGroup.id);
+        setMatchedGroups(groups);
+      } catch (error) {
+        console.error('Error loading matched groups:', error);
+      }
+    };
+
+    loadMatchedGroups();
+  }, [currentGroup?.id]); // Reload when current group changes
+
   return (
     <GroupContext.Provider value={{ 
       currentGroup, 
       availableGroups, 
+      matchedGroups,
       isLoading,
       error,
       handleJoinGroup,

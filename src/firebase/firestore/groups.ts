@@ -96,6 +96,37 @@ export const fetchActiveGroups = async (
   }
 };
 
+export const fetchMatchedGroups = async (groupId: string): Promise<GroupData[]> => {
+  try {
+    // Get current group to get matches
+    const groupRef = doc(db, 'groups', groupId);
+    const groupDoc = await getDoc(groupRef);
+    const groupData = groupDoc.data() as GroupData;
+
+    if (!groupData.matches || Object.keys(groupData.matches).length === 0) {
+      return [];
+    }
+
+    // Get all matched groups data
+    const matchedGroupIds = Object.keys(groupData.matches);
+    const matchedGroups = await Promise.all(
+      matchedGroupIds.map(async (matchedGroupId) => {
+        const matchedGroupRef = doc(db, 'groups', matchedGroupId);
+        const matchedGroupDoc = await getDoc(matchedGroupRef);
+        return {
+          id: matchedGroupDoc.id,
+          ...matchedGroupDoc.data()
+        } as GroupData;
+      })
+    );
+
+    return matchedGroups;
+  } catch (error) {
+    console.error('Error fetching matched groups:', error);
+    throw error;
+  }
+};
+
 export const getGroupByInviteCode = async (inviteCode: string) => {
   try {
     if (!inviteCode) {
@@ -113,7 +144,6 @@ export const getGroupByInviteCode = async (inviteCode: string) => {
     throw error;
   }
 };
-
 export const joinGroup = async (userId: string, groupId: string) => {
   try {
     if (!userId || !groupId) {
@@ -225,6 +255,8 @@ export const handlePass = async (
     throw error;
   }
 };
+
+
 
 
 

@@ -1,24 +1,47 @@
 import React from 'react';
-import { View, Text } from 'react-native';
-import NoGroup from '../../components/screens/NoGroup';
-import { useUserContext } from '@/context/UserContext';
+import { View, Text, ScrollView } from 'react-native';
 import { useGroupContext } from '@/context/GroupContext';
+import NoGroup from '../../components/screens/NoGroup';
 
 const MatchesScreen = () => {
-  const { user } = useUserContext();
-  const { group } = useGroupContext();
+  const { currentGroup, matchedGroups } = useGroupContext();
+
+  const renderMatches = () => {
+    if (!currentGroup?.matches || Object.keys(currentGroup.matches).length === 0) {
+      return (
+        <View className="flex-1 justify-center items-center p-4">
+          <Text className="text-gray-600 text-center">
+            No matches yet. Keep swiping to find groups!
+          </Text>
+        </View>
+      );
+    }
+
+    return (
+      <ScrollView className="w-full px-4">
+        {matchedGroups.map((matchedGroup) => (
+          <View 
+            key={matchedGroup.id}
+            className="bg-white rounded-lg shadow-lg p-4 mb-4"
+          >
+            <Text className="text-xl font-bold mb-2">
+                {matchedGroup.name}
+            </Text>
+          </View>
+        ))}
+      </ScrollView>
+    );
+  };
 
   return (
-    (!user?.currentGroup) ? (
-    <View className="flex-1 items-center justify-center bg-white">
-      <Text className="text-2xl font-bold">Matches</Text>
-      <NoGroup />
+    <View className="flex-1 bg-white">
+      <Text className="text-2xl font-bold text-center py-4">Matches</Text>
+      {!currentGroup ? (
+        <NoGroup />
+      ) : (
+        renderMatches()
+      )}
     </View>
-  ) : (
-    <View className="flex-1 items-center justify-center bg-white">
-      <Text className="text-2xl font-bold">Matches</Text>
-    </View>
-  )
   );
 };
 
