@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text, ScrollView } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { useGroupContext } from '@/context/GroupContext';
 import NoGroup from '../../components/screens/NoGroup';
+import { router } from 'expo-router';
 
 const MatchesScreen = () => {
   const { currentGroup, matchedGroups } = useGroupContext();
@@ -20,16 +21,20 @@ const MatchesScreen = () => {
     return (
       <ScrollView className="w-full px-4">
         {matchedGroups.map((matchedGroup) => (
-          <View 
+          <TouchableOpacity 
             key={matchedGroup.id}
             className="bg-white rounded-lg shadow-lg p-4 mb-4"
+            onPress={() => {
+              const chatId = [currentGroup.id, matchedGroup.id].sort().join('_');
+              router.push(`/chat/${chatId}`);
+            }}
           >
             <Text className="text-xl font-bold mb-2">
                 {matchedGroup.name}
             </Text>
             <Text className="text-gray-600">{matchedGroup.description}</Text>
             <Text className="text-gray-600">{Object.keys(matchedGroup.members).length} members</Text>
-          </View>
+          </TouchableOpacity>
         ))}
       </ScrollView>
     );
