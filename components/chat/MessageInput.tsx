@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity } from 'react-native';
+import { View, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 type MessageInputProps = {
@@ -25,12 +25,13 @@ export const MessageInput = ({ onSend }: MessageInputProps) => {
   };
 
   return (
-    <View className="flex-row items-center p-2 border-t border-gray-200 bg-white">
+    <View className="flex-row items-center p-3 border-t border-neutral-light bg-white">
       <TextInput
-        className="flex-1 border border-gray-300 rounded-full px-4 py-2 mr-2"
+        className="flex-1 bg-neutral-lighter rounded-full px-4 py-2.5 mr-2 text-neutral-text"
         value={message}
         onChangeText={setMessage}
         placeholder="Type a message..."
+        placeholderTextColor="#9CA3AF"
         multiline
         maxLength={500}
       />
@@ -38,16 +39,23 @@ export const MessageInput = ({ onSend }: MessageInputProps) => {
         onPress={handleSend}
         disabled={!message.trim() || isSending}
         className={`
-          p-2 
+          w-10 
+          h-10 
           rounded-full 
-          ${(!message.trim() || isSending) ? 'bg-gray-300' : 'bg-blue-500'}
+          items-center 
+          justify-center
+          ${(!message.trim() || isSending) ? 'bg-neutral-light' : 'bg-primary'}
         `}
       >
-        <Ionicons 
-          name="send" 
-          size={24} 
-          color="white"
-        />
+        {isSending ? (
+          <ActivityIndicator size="small" color="white" />
+        ) : (
+          <Ionicons 
+            name="send" 
+            size={20} 
+            color={!message.trim() ? '#9CA3AF' : 'white'} 
+          />
+        )}
       </TouchableOpacity>
     </View>
   );

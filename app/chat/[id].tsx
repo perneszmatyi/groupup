@@ -1,12 +1,11 @@
-import React, { useEffect } from 'react';
-import { View, Text, TouchableOpacity, SafeAreaView } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useGroupContext } from '@/context/GroupContext';
+import React from 'react';
+import { View, Text, TouchableOpacity, SafeAreaView, ActivityIndicator } from 'react-native';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useGroupContext } from '@/context/GroupContext';
 import { useChat } from '@/hooks/useChat';
-import { MessageInput } from '@/components/chat/MessageInput';
-import { createChat } from '@/src/firebase/firestore/chats';
 import { MessageList } from '@/components/chat/MessageList';
+import { MessageInput } from '@/components/chat/MessageInput';
 
 const ChatScreen = () => {
   const router = useRouter();
@@ -17,29 +16,13 @@ const ChatScreen = () => {
   const otherGroupId = chatId?.split('_').find(id => id !== currentGroup?.id);
   const matchedGroup = matchedGroups?.find(group => group.id === otherGroupId);
 
-  useEffect(() => {
-    const initializeChat = async () => {
-      if (currentGroup?.id && matchedGroup?.id) {
-        try {
-          await createChat(currentGroup.id, matchedGroup.id);
-        } catch (error) {
-          // If error is because chat already exists, that's fine
-          console.log('Chat initialization:', error);
-        }
-      }
-    };
-
-    initializeChat();
-  }, [currentGroup?.id, matchedGroup?.id]);
-
-
   // Use our chat hook
   const { messages, sendMessage, isLoading, error } = useChat(chatId);
 
   if (!chatId || !currentGroup || !matchedGroup) {
     return (
-      <View className="flex-1 justify-center items-center">
-        <Text className="text-red-500">Loading...</Text>
+      <View className="flex-1 justify-center items-center bg-white">
+        <ActivityIndicator size="large" color="#3B82F6" />
       </View>
     );
   }
@@ -47,33 +30,50 @@ const ChatScreen = () => {
   return (
     <SafeAreaView className="flex-1 bg-white">
       {/* Header */}
-      <View className="flex-row items-center p-4 border-b border-gray-200">
+      <View className="flex-row items-center p-4 border-b border-neutral-light">
         <TouchableOpacity 
           onPress={() => router.back()}
-          className="mr-4"
+          className="p-2 -ml-2"
         >
-          <Ionicons name="arrow-back" size={24} color="black" />
+          <Ionicons name="arrow-back" size={24} color="#1F2937" />
         </TouchableOpacity>
-        <View>
-          <Text className="text-lg font-bold">{matchedGroup.name}</Text>
-          <Text className="text-sm text-gray-500">
+        
+        <View className="ml-2 flex-1">
+          <Text className="text-lg font-semibold text-neutral-text">
+            {matchedGroup.name}
+          </Text>
+          <Text className="text-sm text-neutral-body">
             {Object.keys(matchedGroup.members).length} members
           </Text>
         </View>
       </View>
 
-      {/* Temporary Messages Display */}
-      <View className="flex-1 p-4">
+      {/* Chat Content */}
+      <View className="flex-1 bg-neutral-lighter">
         {isLoading ? (
-          <Text>Loading messages...</Text>
+          <View className="flex-1 justify-center items-center">
+            <ActivityIndicator size="large" color="#3B82F6" />
+          </View>
         ) : error ? (
-          <Text className="text-red-500">{error}</Text>
+          <View className="flex-1 justify-center items-center px-4">
+            <Text className="text-danger text-center">{error}</Text>
+          </View>
         ) : messages.length === 0 ? (
-          <Text className="text-gray-500">No messages yet. Start chatting!</Text>
+          <View className="flex-1 justify-center items-center px-4">
+            <Text className="text-neutral-body text-center">
+              No messages yet. Start the conversation!
+            </Text>
+          </View>
         ) : (
-          <MessageList messages={messages} currentGroupId={currentGroup.id} isLoading={isLoading} />
+          <MessageList 
+            messages={messages} 
+            currentGroupId={currentGroup.id} 
+            isLoading={isLoading} 
+          />
         )}
       </View>
+
+      {/* Message Input */}
       <MessageInput onSend={sendMessage} />
     </SafeAreaView>
   );
