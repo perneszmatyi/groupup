@@ -27,6 +27,8 @@ const MatchesScreen = () => {
             <Text className="text-xl font-bold mb-2">
                 {matchedGroup.name}
             </Text>
+            <Text className="text-gray-600">{matchedGroup.description}</Text>
+            <Text className="text-gray-600">{Object.keys(matchedGroup.members).length} members</Text>
           </View>
         ))}
       </ScrollView>

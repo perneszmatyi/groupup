@@ -23,3 +23,23 @@ export interface GroupData {
   matches?: Record<string, boolean>;
 }
 
+export interface MessageData {
+  id: string;
+  content: string;
+  timestamp: Date;
+  senderId: string;
+  senderName: string;
+  groupId: string;
+}
+
+export interface ChatData {
+  id: string;
+  groupId1: string;
+  groupId2: string;
+  createdAt: Date;
+  lastMessage?: {
+    text: string;
+    timestamp: Date;  
+    senderId: string;
+  }
+}
