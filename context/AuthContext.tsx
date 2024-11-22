@@ -8,7 +8,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 type AuthContextType = {
   userAuth: User | null;
   setUserAuth: (user: User | null) => void;
-  handleLogout: () => void;
+  authLogout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -36,13 +36,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     return () => unsubscribe();
   }, []);
 
-  const handleLogout = () => signOut(auth);
+  const authLogout = () => signOut(auth);
 
   return (
     <AuthContext.Provider value={{ 
       userAuth, 
       setUserAuth, 
-      handleLogout,
+      authLogout,
     }}>
       {children}
     </AuthContext.Provider>
