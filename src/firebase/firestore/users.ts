@@ -9,6 +9,7 @@ export const createFirestoreUser = async (
   try {
     const userDoc = {
       ...userData,
+      id: uid,
       createdAt: new Date(),
       currentGroup: null,  
       lastActive: new Date(),

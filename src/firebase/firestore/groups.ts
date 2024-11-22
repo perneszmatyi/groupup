@@ -1,5 +1,5 @@
-import { collection, doc, writeBatch, query, where, getDocs, updateDoc, getDoc } from 'firebase/firestore';
-import { db } from '../../../firebaseConfig';
+import { collection, doc, writeBatch, query, where, getDocs, updateDoc, getDoc, deleteDoc } from 'firebase/firestore';
+import { auth, db } from '../../../firebaseConfig';
 import { GroupData } from './types';
 
 const generateUniqueInviteCode = async () => {
@@ -18,6 +18,15 @@ const generateUniqueInviteCode = async () => {
     }
   }
   return inviteCode;
+};
+
+const isValidImageUrl = (url: string): boolean => {
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+  } catch {
+    return false;
+  }
 };
 
 export const createFirestoreGroup = async (
@@ -144,6 +153,7 @@ export const getGroupByInviteCode = async (inviteCode: string) => {
     throw error;
   }
 };
+
 export const joinGroup = async (userId: string, groupId: string) => {
   try {
     if (!userId || !groupId) {
@@ -256,8 +266,156 @@ export const handlePass = async (
   }
 };
 
+export const updateGroupPhoto = async (
+  groupId: string, 
+  photoUrl: string
+): Promise<void> => {
+  try {
+    if (!isValidImageUrl(photoUrl)) {
+      throw new Error('Invalid image URL. Please provide a valid HTTP/HTTPS URL.');
+    }
+
+    const groupRef = doc(db, 'groups', groupId);
+    await updateDoc(groupRef, {
+      photo: photoUrl
+    });
+
+  } catch (error) {
+    console.error('Error updating group photo:', error);
+    throw error;
+  }
+};
+
+type UpdateGroupInfoData = {
+  name?: string;
+  description?: string;
+};
+
+export const updateGroupInfo = async (
+  groupId: string, 
+  data: UpdateGroupInfoData
+): Promise<void> => {
+  try {
+    if (data.name !== undefined && data.name.trim().length < 1) {
+      throw new Error('Group name cannot be empty');
+    }
+
+    const cleanData: UpdateGroupInfoData = {};
+    
+    if (data.name !== undefined) {
+      cleanData.name = data.name.trim();
+    }
+    
+    if (data.description !== undefined) {
+      cleanData.description = data.description.trim();
+    }
+
+    const groupRef = doc(db, 'groups', groupId);
+    await updateDoc(groupRef, cleanData);
+
+  } catch (error) {
+    console.error('Error updating group info:', error);
+    throw error;
+  }
+};
 
 
+export const leaveGroup = async (groupId: string, userId: string): Promise<void> => {
+  try {;
+    const groupRef = doc(db, 'groups', groupId);
+    const groupSnap = await getDoc(groupRef);
+    
+    if (!groupSnap.exists()) {
+      throw new Error('Group not found');
+    }
+
+    const groupData = groupSnap.data();
+    
+    const updatedMembers = { ...groupData.members };
+    delete updatedMembers[userId];
+
+    await updateDoc(groupRef, {
+      members: updatedMembers
+    });
+
+    const userRef = doc(db, 'users', userId);
+    await updateDoc(userRef, {
+      currentGroup: null
+    });
+
+  } catch (error) {
+    console.error('Error leaving group:', error);
+    throw error;
+  }
+};
 
 
+export const deleteGroup = async (groupId: string, userId: string): Promise<void> => {
+  try {
+    const groupRef = doc(db, 'groups', groupId);
+    const groupSnap = await getDoc(groupRef);
+    
+    if (!groupSnap.exists()) {
+      throw new Error('Group not found');
+    }
 
+    const groupData = groupSnap.data();
+    
+    if (groupData.createdBy !== userId) {
+      throw new Error('Only admin can delete group');
+    }
+
+    const memberIds = Object.keys(groupData.members);
+    await Promise.all(
+      memberIds.map(memberId => 
+        updateDoc(doc(db, 'users', memberId), {
+          currentGroup: null
+        })
+      )
+    );
+
+    if (groupData.matches && Object.keys(groupData.matches).length > 0) {
+      await Promise.all(
+        Object.keys(groupData.matches).map(async (matchedGroupId) => {
+          const matchedGroupRef = doc(db, 'groups', matchedGroupId);
+          const matchedGroupSnap = await getDoc(matchedGroupRef);
+          
+          if (matchedGroupSnap.exists()) {
+            const matchedGroupData = matchedGroupSnap.data();
+            const updatedMatches = { ...matchedGroupData.matches };
+            delete updatedMatches[groupId];
+            
+            await updateDoc(matchedGroupRef, {
+              matches: updatedMatches
+            });
+          }
+        })
+      );
+    }
+
+    const chatsQuery1 = query(
+      collection(db, 'chats'),
+      where('groupId1', '==', groupId)
+    );
+    const chatsQuery2 = query(
+      collection(db, 'chats'),
+      where('groupId2', '==', groupId)
+    );
+
+    const [chatsSnapshot1, chatsSnapshot2] = await Promise.all([
+      getDocs(chatsQuery1),
+      getDocs(chatsQuery2)
+    ]);
+
+    await Promise.all([
+      ...chatsSnapshot1.docs,
+      ...chatsSnapshot2.docs
+    ].map(chatDoc => deleteDoc(chatDoc.ref)));
+
+    await deleteDoc(groupRef);
+
+  } catch (error) {
+    console.error('Error deleting group:', error);
+    throw error;
+  }
+};

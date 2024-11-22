@@ -25,14 +25,12 @@ const SignIn = () => {
       {/* Back Button - Fixed at top */}
       <TouchableOpacity 
         className="absolute top-12 left-6 z-10" 
-        onPress={() => router.back()}
+        onPress={() => router.replace('/')}
       >
         <Ionicons name="arrow-back" size={24} color="#1F2937" />
       </TouchableOpacity>
 
-      {/* Main Content - Centered */}
       <View className="flex-1 justify-center px-6">
-        {/* Header */}
         <View className="mb-16">
           <Text className="text-4xl font-bold text-neutral-text text-center">
             Welcome Back
@@ -42,7 +40,6 @@ const SignIn = () => {
           </Text>
         </View>
 
-        {/* Form */}
         <View className="space-y-6">
           <View>
             <Text className="text-sm text-neutral-body mb-2 ml-1">
@@ -72,14 +69,12 @@ const SignIn = () => {
             />
           </View>
 
-          {/* Error Message */}
           {error ? (
             <Text className="text-danger text-sm px-1 text-center">
               {error}
             </Text>
           ) : null}
 
-          {/* Sign In Button */}
           <TouchableOpacity
             className="bg-primary py-4 rounded-xl mt-4"
             onPress={handleSignIn}

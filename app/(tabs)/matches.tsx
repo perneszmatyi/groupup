@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { useGroupContext } from '@/context/GroupContext';
-import NoGroup from '../../components/screens/NoGroup';
+import NoGroup from '../../components/group/NoGroup';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -28,6 +28,16 @@ const MatchesScreen = () => {
       );
     }
 
+    if (!matchedGroups || matchedGroups.length === 0) {
+      return (
+          <View className="flex-1 justify-center items-center p-8">
+            <Text>Loading matches...</Text>
+          </View>
+        );
+      }
+
+    
+
     return (
       <ScrollView 
         className="flex-1" 
@@ -35,7 +45,7 @@ const MatchesScreen = () => {
         showsVerticalScrollIndicator={false}
       >
         {matchedGroups.map((matchedGroup) => {
-          const chatId = [currentGroup.id, matchedGroup.id].sort().join('_');
+          const chatId = [currentGroup?.id, matchedGroup.id].sort().join('_');
           
           return (
             <TouchableOpacity 

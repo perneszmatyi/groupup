@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
-import NoGroup from '../../components/screens/NoGroup';
+import NoGroup from '../../components/group/NoGroup';
 import { useUserContext } from '@/context/UserContext';
 import { useGroupContext } from '@/context/GroupContext';
 import { handleLike, handlePass } from '@/src/firebase/firestore/groups';

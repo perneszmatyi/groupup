@@ -5,9 +5,10 @@ import { initializeAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 
+
 const firebaseConfig = {
     apiKey: "AIzaSyDxI6mYUEuJCUZDsw6PGi41AWqMOF5MQZ0",
-    authDomain: "groupup-7a764.firebaseapp.com",
+    authDomain: "groupup-7a764s.firebaseapp.com",
     projectId: "groupup-7a764",
     storageBucket: "groupup-7a764.appspot.com",
     messagingSenderId: "898477628360",

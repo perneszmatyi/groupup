@@ -54,17 +54,12 @@ export const sendMessage = async (
       timestamp: new Date()
     };
 
-    // Add message to subcollection
-    await addDoc(messagesRef, messageData);
-
-    // Update last message in chat document
-    const chatRef = doc(db, 'chats', chatId);
-    await updateDoc(chatRef, {
-      lastMessage: {
-        text,
-        timestamp: new Date(),
-        senderId
-      }
+    await addDoc(messagesRef, {
+      content: text,
+      senderId,
+      senderName,
+      groupId,
+      timestamp: new Date()
     });
   } catch (error) {
     console.error('Error sending message:', error);

@@ -12,11 +12,9 @@ const ChatScreen = () => {
   const { id: chatId } = useLocalSearchParams<{ id: string }>();
   const { currentGroup, matchedGroups } = useGroupContext();
 
-  // Get the other group's ID from chat ID
   const otherGroupId = chatId?.split('_').find(id => id !== currentGroup?.id);
   const matchedGroup = matchedGroups?.find(group => group.id === otherGroupId);
 
-  // Use our chat hook
   const { messages, sendMessage, isLoading, error } = useChat(chatId);
 
   if (!chatId || !currentGroup || !matchedGroup) {
@@ -29,10 +27,9 @@ const ChatScreen = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      {/* Header */}
       <View className="flex-row items-center p-4 border-b border-neutral-light">
         <TouchableOpacity 
-          onPress={() => router.back()}
+          onPress={() => router.replace('/matches')}
           className="p-2 -ml-2"
         >
           <Ionicons name="arrow-back" size={24} color="#1F2937" />
@@ -48,7 +45,6 @@ const ChatScreen = () => {
         </View>
       </View>
 
-      {/* Chat Content */}
       <View className="flex-1 bg-neutral-lighter">
         {isLoading ? (
           <View className="flex-1 justify-center items-center">
