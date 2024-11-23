@@ -30,7 +30,7 @@ const isValidImageUrl = (url: string): boolean => {
 };
 
 export const createFirestoreGroup = async (
-  groupData: Omit<GroupData, 'inviteCode' | 'isActive' | 'createdAt' | 'members' >
+  groupData: Omit<GroupData, 'id' | 'inviteCode' | 'isActive' | 'createdAt' | 'members' >
 ) => {
   try {
     const batch = writeBatch(db);
@@ -420,5 +420,5 @@ export const deleteGroup = async (groupId: string, userId: string): Promise<void
   }
 
 
-  
+
 };

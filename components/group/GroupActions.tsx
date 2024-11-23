@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useGroupContext } from '@/context/GroupContext';
 import { useAuthContext } from '@/context/AuthContext';
+import { Ionicons } from '@expo/vector-icons';
 
 type GroupActionsProps = {
   adminId: string;
@@ -62,15 +63,29 @@ export const GroupActions = ({ adminId, onLeaveGroup, onDeleteGroup }: GroupActi
   };
 
   return (
-    <View className="p-4 mt-4">
+    <View className="px-4 py-6">
+      <Text className="text-sm text-gray-400 mb-4 ml-1">Group Actions</Text>
+      
       <TouchableOpacity
         onPress={handleAction}
         disabled={isLoading}
-        className={`p-3 rounded-lg ${
-          isAdmin ? 'bg-red-500' : 'bg-gray-500'
-        } ${isLoading ? 'opacity-50' : ''}`}
+        className={`
+          flex-row items-center p-4 rounded-xl border
+          ${isAdmin 
+            ? 'bg-red-900/20 border-red-900/30 active:bg-red-900/30' 
+            : 'bg-gray-800/50 border-gray-700 active:bg-gray-800'
+          } 
+          ${isLoading ? 'opacity-50' : ''}
+        `}
       >
-        <Text className="text-white text-center font-semibold">
+        <Ionicons 
+          name={isAdmin ? "trash-outline" : "exit-outline"} 
+          size={24} 
+          color={isAdmin ? "#EF4444" : "#60A5FA"}
+        />
+        <Text className={`ml-4 flex-1 font-medium text-base
+          ${isAdmin ? 'text-red-400' : 'text-gray-300'}`}
+        >
           {isLoading 
             ? 'Processing...' 
             : isAdmin 
@@ -78,6 +93,11 @@ export const GroupActions = ({ adminId, onLeaveGroup, onDeleteGroup }: GroupActi
               : 'Leave Group'
           }
         </Text>
+        <Ionicons 
+          name="chevron-forward" 
+          size={24} 
+          color={isAdmin ? "#EF4444" : "#60A5FA"}
+        />
       </TouchableOpacity>
     </View>
   );

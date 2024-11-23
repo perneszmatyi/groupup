@@ -8,6 +8,7 @@ import PasswordStep from '@/components/auth/PasswordStep';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../firebaseConfig';
 import { createFirestoreUser } from '@/src/firebase/firestore/users';
+import { Colors } from '@/constants/Colors';
 
 const SignUp = () => {
   const [step, setStep] = useState(1);
@@ -60,20 +61,20 @@ const SignUp = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1" style={{ backgroundColor: Colors.dark.background }}>
       <TouchableOpacity 
         className="absolute top-12 left-6 z-10" 
         onPress={handlePreviousStep}
       >
-        <Ionicons name="arrow-back" size={24} color="#1F2937" />
+        <Ionicons name="arrow-back" size={24} color="white" />
       </TouchableOpacity>
 
       <View className="flex-1 justify-center px-6">
         <View className="mb-16">
-          <Text className="text-4xl font-bold text-neutral-text text-center">
+          <Text className="text-4xl font-bold text-white text-center">
             Create Account
           </Text>
-          <Text className="text-neutral-body mt-3 text-center text-lg">
+          <Text className="text-white/70 mt-3 text-center text-lg">
             Step {step} of 3
           </Text>
         </View>
@@ -101,17 +102,17 @@ const SignUp = () => {
           )}
 
           {error ? (
-            <Text className="text-danger text-sm px-1 text-center">
+            <Text className="text-red-400 text-sm px-1 text-center">
               {error}
             </Text>
           ) : null}
 
           <View className="flex-row justify-between space-x-6 mt-4">
             <TouchableOpacity
-              className="flex-1 bg-neutral-light py-4 mr-4 rounded-xl"
+              className="flex-1 bg-white/10 py-4 mr-4 rounded-xl active:bg-white/20"
               onPress={handlePreviousStep}
             >
-              <Text className="text-neutral-text text-center font-semibold text-lg">
+              <Text className="text-white text-center font-semibold text-lg">
                 Back
               </Text>
             </TouchableOpacity>
@@ -126,9 +127,8 @@ const SignUp = () => {
             </TouchableOpacity>
           </View>
 
-
           <View className="flex-row justify-center mt-8">
-            <Text className="text-neutral-body text-base">
+            <Text className="text-white/70 text-base">
               Already have an account?{' '}
             </Text>
             <TouchableOpacity onPress={() => router.push('/(auth)/sign-in')}>

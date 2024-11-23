@@ -4,11 +4,13 @@ import { router } from 'expo-router';
 import { auth } from '../../firebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { Ionicons } from '@expo/vector-icons';
+import { Colors } from '@/constants/Colors';
 
 const SignIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const colors = Colors['dark'];
 
   const handleSignIn = async () => {
     try {
@@ -21,32 +23,33 @@ const SignIn = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1" style={{ backgroundColor: colors.background }}>
       <TouchableOpacity 
         className="absolute top-12 left-6 z-10" 
         onPress={() => router.replace('/')}
       >
-        <Ionicons name="arrow-back" size={24} color="#1F2937" />
+        <Ionicons name="arrow-back" size={24} color="white" />
       </TouchableOpacity>
 
       <View className="flex-1 justify-center px-6">
         <View className="mb-16">
-          <Text className="text-4xl font-bold text-neutral-text text-center">
+          <Text className="text-4xl font-bold text-white text-center">
             Welcome Back
           </Text>
-          <Text className="text-neutral-body mt-3 text-center text-lg">
+          <Text className="text-white/70 mt-3 text-center text-lg">
             Sign in to continue
           </Text>
         </View>
 
         <View className="space-y-6">
           <View>
-            <Text className="text-sm text-neutral-body mb-2 ml-1">
+            <Text className="text-sm text-white/70 mb-2 ml-1">
               Email
             </Text>
             <TextInput
-              className="w-full bg-neutral-light rounded-xl px-4 py-4 mb-4 text-neutral-text text-lg"
+              className="w-full bg-white/10 rounded-xl px-4 py-4 mb-4 text-white text-lg"
               placeholder="Enter your email"
+              placeholderTextColor="rgba(255, 255, 255, 0.5)"
               value={email}
               onChangeText={setEmail}
               keyboardType="email-address"
@@ -56,12 +59,13 @@ const SignIn = () => {
           </View>
 
           <View>
-            <Text className="text-sm text-neutral-body mb-2 ml-1">
+            <Text className="text-sm text-white/70 mb-2 ml-1">
               Password
             </Text>
             <TextInput
-              className="w-full bg-neutral-light rounded-xl px-4 py-4 text-neutral-text"
+              className="w-full bg-white/10 rounded-xl px-4 py-4 text-white"
               placeholder="Enter your password"
+              placeholderTextColor="rgba(255, 255, 255, 0.5)"
               value={password}
               onChangeText={setPassword}
               secureTextEntry
@@ -69,7 +73,7 @@ const SignIn = () => {
           </View>
 
           {error ? (
-            <Text className="text-danger text-sm px-1 text-center">
+            <Text className="text-red-400 text-sm px-1 text-center">
               {error}
             </Text>
           ) : null}
@@ -83,9 +87,8 @@ const SignIn = () => {
             </Text>
           </TouchableOpacity>
 
-          {/* Sign Up Link */}
           <View className="flex-row justify-center mt-8">
-            <Text className="text-neutral-body text-base">
+            <Text className="text-white/70 text-base">
               Don't have an account?{' '}
             </Text>
             <TouchableOpacity onPress={() => router.push('/(auth)/sign-up')}>

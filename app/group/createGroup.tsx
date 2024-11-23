@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
-import { db, auth } from '../../firebaseConfig';
-import { collection, addDoc } from 'firebase/firestore';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
 import { useRouter } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { createFirestoreGroup } from '../../src/firebase/firestore/groups';
+import { auth } from '../../firebaseConfig';
 
 const CreateGroup = () => {
   const [groupName, setGroupName] = useState('');
@@ -14,10 +13,7 @@ const CreateGroup = () => {
   const handleCreateGroup = async () => {
     try {
       const user = auth.currentUser;
-      if (!user) {
-        console.error('No user logged in');
-        return;
-      }
+      if (!user) return;
       await createFirestoreGroup({
         name: groupName,
         description: description,
@@ -30,51 +26,75 @@ const CreateGroup = () => {
   };
 
   return (
-    <ScrollView className="flex-1 bg-white" contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
-      <View className="p-6">
+    <SafeAreaView className="flex-1 bg-[#151718]">
+      <View className="bg-gray-800/50 p-4 border-b border-gray-700 flex-row items-center">
         <TouchableOpacity 
-          className="absolute left-4 top-4 z-10"
           onPress={() => router.back()}
+          className="mr-4"
         >
-          <Ionicons name="arrow-back" size={24} color="black" />
+          <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
+        <Text className="text-2xl font-bold text-white">Create Group</Text>
+      </View>
 
-        <Text className="text-2xl font-bold mb-6 text-center">Create New Group</Text>
-        
-        <View className="space-y-4">
+      <ScrollView 
+        className="flex-1 p-6 h-full"
+        showsVerticalScrollIndicator={false}
+      >
+        <View className="items-center mb-12">
+          <View className="bg-gray-800/50 p-6 rounded-full mb-6">
+            <Ionicons 
+              name="add-circle-outline" 
+              size={48} 
+              color="#60A5FA"
+            />
+          </View>
+          <Text className="text-white text-2xl font-bold mb-3 text-center">
+            Create a New Group
+          </Text>
+          <Text className="text-gray-400 text-center text-base">
+            Start a new group and invite others to join
+          </Text>
+        </View>
+
+        <View className="space-y-6 h-full">
           <View>
-            <Text className="text-gray-600 mb-2 text-center">Group Name</Text>
+            <Text className="text-sm text-gray-400 mb-2 ml-1">Group Name</Text>
             <TextInput
-              className="border border-gray-300 rounded-md p-3"
+              className="border border-gray-600 bg-gray-800/50 rounded-xl p-4 text-white text-base"
               value={groupName}
               onChangeText={setGroupName}
               placeholder="Enter group name"
+              placeholderTextColor="#9CA3AF"
               autoCapitalize="none"
             />
           </View>
 
           <View>
-            <Text className="text-gray-600 mb-2 text-center">Description</Text>
+            <Text className="text-sm text-gray-400 mb-2 ml-1">Description</Text>
             <TextInput
-              className="border border-gray-300 rounded-md p-3"
+              className="border border-gray-600 bg-gray-800/50 rounded-xl p-4 text-white text-base"
               value={description}
               onChangeText={setDescription}
               placeholder="Describe your group"
+              placeholderTextColor="#9CA3AF"
               multiline
               numberOfLines={4}
-              autoCapitalize="none"
+              textAlignVertical="top"
             />
           </View>
 
           <TouchableOpacity
-            className="bg-blue-500 py-3 rounded-md mt-6"
+            className="bg-primary p-4 rounded-xl active:bg-primary-dark mt-4"
             onPress={handleCreateGroup}
           >
-            <Text className="text-white text-center font-semibold">Create Group</Text>
+            <Text className="text-white text-center font-semibold text-lg">
+              Create Group
+            </Text>
           </TouchableOpacity>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

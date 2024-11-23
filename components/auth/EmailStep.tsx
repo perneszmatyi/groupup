@@ -10,8 +10,9 @@ const EmailStep: React.FC<EmailStepProps> = ({ email, updateFormData }) => {
   return (
     <View className="w-full">
       <TextInput
-        className="w-full bg-gray-100 rounded-md p-2 mb-4"
+        className="w-full bg-white/10 rounded-xl px-4 py-4 mb-4 text-white text-lg"
         placeholder="Email"
+        placeholderTextColor="rgba(255, 255, 255, 0.5)"
         keyboardType="email-address"
         autoCapitalize="none"
         value={email}

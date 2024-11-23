@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
 import { useRouter } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useGroupContext } from '../../context/GroupContext';
@@ -19,38 +19,62 @@ const JoinGroup = () => {
   };
 
   return (
-    <ScrollView className="flex-1 bg-white" contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
-      <View className="p-6">
+    <SafeAreaView className="flex-1 bg-[#151718]">
+      <View className="bg-gray-800/50 p-4 border-b border-gray-700 flex-row items-center">
         <TouchableOpacity 
-          className="absolute left-4 top-4 z-10"
           onPress={() => router.back()}
+          className="mr-4"
         >
-          <Ionicons name="arrow-back" size={24} color="black" />
+          <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
+        <Text className="text-2xl font-bold text-white">Join Group</Text>
+      </View>
 
-        <Text className="text-2xl font-bold mb-6 text-center">Join Group</Text>
-        
-        <View className="space-y-4">
+      <ScrollView 
+        className="flex-1 p-6 h-full"
+        showsVerticalScrollIndicator={false}
+      >
+        <View className="items-center mb-12">
+          <View className="bg-gray-800/50 p-6 rounded-full mb-6">
+            <Ionicons 
+              name="people-outline" 
+              size={48} 
+              color="#60A5FA"
+            />
+          </View>
+          <Text className="text-white text-2xl font-bold mb-3 text-center">
+            Join a Group
+          </Text>
+          <Text className="text-gray-400 text-center text-base">
+            Enter the invite code to join an existing group
+          </Text>
+        </View>
+
+        <View className="space-y-6 h-full">
           <View>
-            <Text className="text-gray-600 mb-2 text-center">Invite Code</Text>
+            <Text className="text-sm text-gray-400 mb-2 ml-1">Invite Code</Text>
             <TextInput
-              className="border border-gray-300 rounded-md p-3"
+              className="border border-gray-600 bg-gray-800/50 rounded-xl p-4 text-white text-base font-mono tracking-wider text-center uppercase"
               value={inviteCode}
               onChangeText={setInviteCode}
               placeholder="Enter invite code"
-              autoCapitalize="none"
+              placeholderTextColor="#9CA3AF"
+              autoCapitalize="characters"
+              maxLength={6}
             />
           </View>
 
           <TouchableOpacity
-            className="bg-blue-500 p-3 rounded-md"
+            className="bg-primary p-4 rounded-xl active:bg-primary-dark mt-4"
             onPress={handleSubmit}
           >
-            <Text className="text-white text-center font-semibold">Join Group</Text>
+            <Text className="text-white text-center font-semibold text-lg">
+              Join Group
+            </Text>
           </TouchableOpacity>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

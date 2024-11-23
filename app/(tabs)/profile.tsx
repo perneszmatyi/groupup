@@ -73,40 +73,68 @@ const ProfileScreen = () => {
   };
 
   return (
-    <ScrollView className="flex-1 bg-white">
-      <View className="items-center pt-8 pb-4">
-        <View className="relative">
+    <View className="flex-1 bg-[#151718]">
+      <View className="bg-gray-800/50 p-4 border-b border-gray-700">
+        <Text className="text-2xl font-bold text-white">Profile</Text>
+      </View>
+
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View className="items-center pt-8 pb-8">
           <Image
             source={
               user?.profilePicture 
                 ? { uri: user.profilePicture }
                 : require('@/assets/default.png')
             }
-            className="w-24 h-24 rounded-full bg-gray-200"
+            className="w-28 h-28 rounded-full bg-gray-800"
           />
+          <View className="items-center mt-6">
+            <Text className="text-2xl font-bold text-white">
+              {user?.firstName} {user?.lastName}
+            </Text>
+            <Text className="text-gray-400 mt-2">
+              {userAuth?.email}
+            </Text>
+          </View>
         </View>
 
         {isEditing ? (
-          <View className="w-full px-4 mt-4 space-y-4">
-            <TextInput
-              value={firstName}
-              onChangeText={setFirstName}
-              placeholder="First Name"
-              className="border border-gray-300 rounded-lg p-2 w-full"
-            />
-            <TextInput
-              value={lastName}
-              onChangeText={setLastName}
-              placeholder="Last Name"
-              className="border border-gray-300 rounded-lg p-2 w-full"
-            />
-            <TextInput
-              value={profilePicture}
-              onChangeText={setProfilePicture}
-              placeholder="Profile Picture URL"
-              className="border border-gray-300 rounded-lg p-2 w-full"
-            />
-            <View className="flex-row justify-center space-x-4">
+          <View className="w-full px-6 space-y-6">
+            <View>
+              <Text className="text-sm text-gray-400 mb-2 ml-1">First Name</Text>
+              <TextInput
+                value={firstName}
+                onChangeText={setFirstName}
+                placeholder="Enter your first name"
+                placeholderTextColor="#9CA3AF"
+                className="border border-gray-600 bg-gray-800/50 rounded-xl p-4 w-full text-white text-base"
+              />
+            </View>
+
+            <View>
+              <Text className="text-sm text-gray-400 mb-2 ml-1">Last Name</Text>
+              <TextInput
+                value={lastName}
+                onChangeText={setLastName}
+                placeholder="Enter your last name"
+                placeholderTextColor="#9CA3AF"
+                className="border border-gray-600 bg-gray-800/50 rounded-xl p-4 w-full text-white text-base"
+              />
+            </View>
+
+            <View>
+              <Text className="text-sm text-gray-400 mb-2 ml-1">Profile Picture URL</Text>
+              <TextInput
+                value={profilePicture}
+                onChangeText={setProfilePicture}
+                placeholder="Enter image URL"
+                placeholderTextColor="#9CA3AF"
+                className="border border-gray-600 bg-gray-800/50 rounded-xl p-4 w-full text-white text-base"
+                autoCapitalize="none"
+              />
+            </View>
+
+            <View className="flex-row justify-between space-x-4 mt-8">
               <TouchableOpacity 
                 onPress={() => {
                   setIsEditing(false);
@@ -114,57 +142,62 @@ const ProfileScreen = () => {
                   setLastName(user?.lastName || '');
                   setProfilePicture(user?.profilePicture || '');
                 }}
-                className="bg-gray-500 px-4 py-2 rounded-lg"
+                className="flex-1 bg-white/10 p-4 rounded-xl active:bg-white/20"
               >
-                <Text className="text-white">Cancel</Text>
+                <Text className="text-white font-semibold text-center text-base">Cancel</Text>
               </TouchableOpacity>
+
               <TouchableOpacity 
                 onPress={handleUpdateProfile}
-                className="bg-blue-500 px-4 py-2 rounded-lg"
                 disabled={isLoading}
+                className={`flex-1 bg-primary p-4 rounded-xl ${isLoading ? 'opacity-50' : ''} active:bg-primary-dark`}
               >
-                <Text className="text-white">
-                  {isLoading ? 'Saving...' : 'Save'}
+                <Text className="text-white font-semibold text-center text-base">
+                  {isLoading ? 'Saving...' : 'Save Changes'}
                 </Text>
               </TouchableOpacity>
             </View>
           </View>
         ) : (
-          <View className="items-center mt-4">
-            <Text className="text-xl font-semibold">
-              {user?.firstName} {user?.lastName}
-            </Text>
+          <View className="px-6 space-y-4">
+            <Text className="text-sm text-gray-400 mb-2 ml-1">Account Settings</Text>
+            
             <TouchableOpacity 
               onPress={() => setIsEditing(true)}
-              className="mt-2"
+              className="flex-row items-center p-4 bg-gray-800/50 rounded-xl border border-gray-700 active:bg-gray-800"
             >
-              <Text className="text-blue-500">Edit Profile</Text>
+              <Ionicons name="settings-outline" size={24} color="#60A5FA" />
+              <Text className="ml-4 flex-1 text-gray-300 font-medium text-base">Profile Settings</Text>
+              <Ionicons name="chevron-forward" size={24} color="#60A5FA" />
             </TouchableOpacity>
+
+            <View className="flex-row justify-between mt-4">
+              <TouchableOpacity 
+                onPress={handleLogout}
+                className="w-[49%] flex-row items-center justify-center p-4 bg-gray-800/50 rounded-xl border border-gray-700 active:bg-gray-800"
+              >
+                <Ionicons name="log-out-outline" size={24} color="#60A5FA" />
+                <Text className="ml-3 text-gray-300 font-medium text-base">Sign Out</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity 
+                onPress={handleDeleteAccount}
+                disabled={isLoading}
+                className={`w-[49%] flex-row items-center justify-center p-4 bg-red-900/20 rounded-xl border border-red-900/30 
+                  ${isLoading ? 'opacity-50' : ''} active:bg-red-900/30`}
+              >
+                <Ionicons name="trash-outline" size={24} color="#EF4444" />
+                <Text className="ml-3 text-red-400 font-medium text-base">
+                  Delete
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         )}
-      </View>
 
-      <View className="p-4 space-y-4">
-        <TouchableOpacity 
-          onPress={handleLogout}
-          className="flex-row items-center p-4 bg-gray-100 rounded-lg"
-        >
-          <Ionicons name="log-out-outline" size={24} color="#374151" />
-          <Text className="ml-4 text-gray-700">Log Out</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity 
-          onPress={handleDeleteAccount}
-          className="flex-row items-center p-4 bg-red-100 rounded-lg"
-          disabled={isLoading}
-        >
-          <Ionicons name="trash-outline" size={24} color="#DC2626" />
-          <Text className="ml-4 text-red-600">
-            {isLoading ? 'Deleting...' : 'Delete Account'}
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+        <View className="h-20" />
+      </ScrollView>
+    </View>
   );
 };
 

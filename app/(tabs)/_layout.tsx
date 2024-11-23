@@ -1,23 +1,37 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
+import { StatusBar } from 'react-native';
 
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const colors = Colors['dark'];
 
-  
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
+      <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
       <Tabs
         screenOptions={{
-          tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+          tabBarActiveTintColor: colors.tint,
           headerShown: false,
           tabBarStyle: {
-            paddingBottom: 10,
+            paddingBottom: 6,
+            height: 56,
+            backgroundColor: colors.background,
+            borderTopWidth: 0,
           },
+          tabBarItemStyle: {
+            paddingVertical: 4,
+          },
+          tabBarLabelStyle: {
+            fontSize: 12,
+            marginTop: -4,
+          },
+          tabBarInactiveTintColor: colors.tabIconDefault,
         }}>
 
         <Tabs.Screen

@@ -13,7 +13,7 @@ export const MessageList = ({ messages, currentGroupId, isLoading }: MessageList
   if (isLoading) {
     return (
       <View className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator size="large" color="#60A5FA" />
       </View>
     );
   }
@@ -21,7 +21,7 @@ export const MessageList = ({ messages, currentGroupId, isLoading }: MessageList
   if (messages.length === 0) {
     return (
       <View className="flex-1 justify-center items-center">
-        <Text className="text-gray-500">No messages yet. Start chatting!</Text>
+        <Text className="text-gray-400">No messages yet. Start chatting!</Text>
       </View>
     );
   }
@@ -30,6 +30,7 @@ export const MessageList = ({ messages, currentGroupId, isLoading }: MessageList
     <ScrollView 
       className="flex-1 px-4"
       contentContainerStyle={{ paddingVertical: 16 }}
+      showsVerticalScrollIndicator={false}
     >
       {messages.map((message) => (
         <MessageBubble

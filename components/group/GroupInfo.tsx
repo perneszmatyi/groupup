@@ -51,7 +51,7 @@ export const GroupInfo = ({
   };
 
   return (
-    <View className="flex-1 bg-white">
+    <View className="flex-1 bg-[#151718]">
       <View className="items-center py-6 relative">
         <Image
           source={
@@ -59,7 +59,7 @@ export const GroupInfo = ({
               ? { uri: photo }
               : require('@/assets/group-default.jpg')
           }
-          className="w-32 h-32 rounded-full bg-gray-200"
+          className="w-32 h-32 rounded-full bg-gray-800"
         />
         
         <TouchableOpacity 
@@ -69,46 +69,48 @@ export const GroupInfo = ({
           <Ionicons 
             name={isEditing ? "close" : "settings-outline"} 
             size={24} 
-            color="#3b82f6"
+            color="#60A5FA"
           />
         </TouchableOpacity>
 
-        <Text className="text-xl font-bold mt-4">{name}</Text>
+        <Text className="text-xl font-bold mt-4 text-white">{name}</Text>
       </View>
 
       {isEditing ? (
         <ScrollView className="p-4">
-          <Text className="text-sm text-gray-600 mb-1">Photo URL</Text>
+          <Text className="text-sm text-gray-300 mb-1">Photo URL</Text>
           <TextInput
             value={newPhotoUrl}
             onChangeText={setNewPhotoUrl}
             placeholder="Enter image URL"
-            className="border border-gray-300 rounded-lg p-2 mb-4"
+            className="border border-gray-600 bg-gray-800 rounded-lg p-2 mb-4 text-white"
+            placeholderTextColor="#9CA3AF"
             autoCapitalize="none"
           />
 
-          <Text className="text-sm text-gray-600 mb-1">Group Name</Text>
+          <Text className="text-sm text-gray-300 mb-1">Group Name</Text>
           <TextInput
             value={newName}
             onChangeText={setNewName}
-            className="border border-gray-300 rounded-lg p-2 mb-4"
+            className="border border-gray-600 bg-gray-800 rounded-lg p-2 mb-4 text-white"
             placeholder="Enter group name"
+            placeholderTextColor="#9CA3AF"
           />
 
-
-          <Text className="text-sm text-gray-600 mb-1">Description</Text>
+          <Text className="text-sm text-gray-300 mb-1">Description</Text>
           <TextInput
             value={newDescription}
             onChangeText={setNewDescription}
-            className="border border-gray-300 rounded-lg p-2 mb-4"
+            className="border border-gray-600 bg-gray-800 rounded-lg p-2 mb-4 text-white"
             placeholder="Enter group description"
+            placeholderTextColor="#9CA3AF"
             multiline
             numberOfLines={3}
           />
 
           <TouchableOpacity 
             onPress={handleSave}
-            className={`p-3 rounded-lg ${isLoading ? 'bg-blue-300' : 'bg-blue-500'}`}
+            className={`p-3 rounded-lg ${isLoading ? 'bg-blue-600/50' : 'bg-blue-600'}`}
             disabled={isLoading}
           >
             <Text className="text-white text-center font-semibold">
@@ -119,13 +121,13 @@ export const GroupInfo = ({
       ) : (
         <View className="p-4">
           <View className="mb-4">
-            <Text className="text-sm text-gray-600">Description</Text>
-            <Text className="mt-1">{description || 'No description'}</Text>
+            <Text className="text-sm text-gray-400">Description</Text>
+            <Text className="mt-1 text-white">{description || 'No description'}</Text>
           </View>
 
-          <View className="bg-gray-50 p-4 rounded-lg items-center">
-            <Text className="text-sm text-gray-600 mb-2">Group Invite Code</Text>
-            <Text className="font-mono text-2xl tracking-wider text-blue-600">
+          <View className="bg-gray-800/50 p-4 rounded-lg items-center">
+            <Text className="text-sm text-gray-400 mb-2">Group Invite Code</Text>
+            <Text className="font-mono text-2xl tracking-wider text-blue-400">
               {inviteCode}
             </Text>
           </View>

@@ -41,15 +41,15 @@ export const MembersList = ({ members, adminId }: MembersListProps) => {
   }, [members]);
   return (
     <View className="p-4">
-      <Text className="text-lg font-semibold mb-4">
+      <Text className="text-lg font-semibold mb-4 text-white">
         Members ({memberUsers.length})
       </Text>
 
       {memberUsers.map((member, index) => (
         <View 
           key={index} 
-          className={`flex-row items-center p-2 rounded-lg border-b border-gray-100 ${
-            member.id === userAuth?.uid ? 'p-2 rounded-lg bg-blue-50 border-b-2 border-gray-100' : ''
+          className={`flex-row items-center p-2 rounded-lg border-b border-gray-800 ${
+            member.id === userAuth?.uid ? 'bg-blue-900/30' : ''
           }`}
         >
           <Image
@@ -58,17 +58,17 @@ export const MembersList = ({ members, adminId }: MembersListProps) => {
                 ? { uri: member.profilePicture }
                 : require('@/assets/default.png')
             }
-            className="w-10 h-10 rounded-full bg-gray-200"
+            className="w-10 h-10 rounded-full bg-gray-800"
           />
           
           <View className="flex-1 ml-3">
-            <Text className={`font-medium ${
-              member.id === userAuth?.uid ? 'text-blue-600' : ''
+            <Text className={`font-medium text-white ${
+              member.id === userAuth?.uid ? 'text-blue-400' : ''
             }`}>
               {member.firstName} {member.lastName}
               {member.id === userAuth?.uid && " (te)"}
             </Text>
-            <Text className="text-sm text-gray-500">
+            <Text className="text-sm text-gray-400">
               {member.id === adminId ? "Admin" : "Member"}
             </Text>
           </View>

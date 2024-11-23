@@ -20,29 +20,30 @@ export const MessageBubble = ({ message, isOwnGroup }: MessageBubbleProps) => {
 
   return (
     <View 
-      className={`flex-row ${isOwnGroup ? 'justify-end' : 'justify-start'} mb-3 mx-4`}
+      className={`flex-row ${isOwnGroup ? 'justify-end' : 'justify-start'} mb-3`}
     >
       <View 
         className={`
           max-w-[80%] 
-          rounded-2xl 
+          rounded-xl 
           px-4 
           py-2.5
-          ${isOwnGroup ? 'bg-primary' : 'bg-white'}
+          ${isOwnGroup ? 'bg-primary' : 'bg-gray-800/50'}
           ${isOwnGroup ? 'rounded-tr-sm' : 'rounded-tl-sm'}
-          shadow-sm
+          border
+          ${isOwnGroup ? 'border-primary-dark' : 'border-gray-700'}
         `}
       >
         <Text 
-          className={`text-xs mb-1 ${isOwnGroup ? 'text-primary-light' : 'text-neutral-body'}`}
+          className={`text-xs mb-1 ${isOwnGroup ? 'text-blue-200' : 'text-gray-400'}`}
         >
           {message.senderName}
         </Text>
-        <Text className={`${isOwnGroup ? 'text-white' : 'text-neutral-text'} text-base`}>
+        <Text className="text-white text-base">
           {message.content}
         </Text>
         <Text 
-          className={`text-xs mt-1 ${isOwnGroup ? 'text-primary-light' : 'text-neutral-body'}`}
+          className={`text-xs mt-1 ${isOwnGroup ? 'text-blue-200' : 'text-gray-400'}`}
         >
           {formatTime(message.timestamp)}
         </Text>

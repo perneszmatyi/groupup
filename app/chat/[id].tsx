@@ -19,44 +19,44 @@ const ChatScreen = () => {
 
   if (!chatId || !currentGroup || !matchedGroup) {
     return (
-      <View className="flex-1 justify-center items-center bg-white">
-        <ActivityIndicator size="large" color="#3B82F6" />
+      <View className="flex-1 justify-center items-center bg-[#151718]">
+        <ActivityIndicator size="large" color="#60A5FA" />
       </View>
     );
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <View className="flex-row items-center p-4 border-b border-neutral-light">
+    <SafeAreaView className="flex-1 bg-[#151718]">
+      <View className="bg-gray-800/50 p-4 border-b border-gray-700 flex-row items-center">
         <TouchableOpacity 
           onPress={() => router.replace('/matches')}
-          className="p-2 -ml-2"
+          className="mr-4"
         >
-          <Ionicons name="arrow-back" size={24} color="#1F2937" />
+          <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
         
-        <View className="ml-2 flex-1">
-          <Text className="text-lg font-semibold text-neutral-text">
+        <View className="flex-1">
+          <Text className="text-xl font-bold text-white">
             {matchedGroup.name}
           </Text>
-          <Text className="text-sm text-neutral-body">
+          <Text className="text-sm text-gray-400">
             {Object.keys(matchedGroup.members).length} members
           </Text>
         </View>
       </View>
 
-      <View className="flex-1 bg-neutral-lighter">
+      <View className="flex-1 bg-[#151718]">
         {isLoading ? (
           <View className="flex-1 justify-center items-center">
-            <ActivityIndicator size="large" color="#3B82F6" />
+            <ActivityIndicator size="large" color="#60A5FA" />
           </View>
         ) : error ? (
           <View className="flex-1 justify-center items-center px-4">
-            <Text className="text-danger text-center">{error}</Text>
+            <Text className="text-red-400 text-center">{error}</Text>
           </View>
         ) : messages.length === 0 ? (
           <View className="flex-1 justify-center items-center px-4">
-            <Text className="text-neutral-body text-center">
+            <Text className="text-gray-400 text-center">
               No messages yet. Start the conversation!
             </Text>
           </View>
@@ -69,7 +69,6 @@ const ChatScreen = () => {
         )}
       </View>
 
-      {/* Message Input */}
       <MessageInput onSend={sendMessage} />
     </SafeAreaView>
   );

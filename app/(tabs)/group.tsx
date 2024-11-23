@@ -19,7 +19,7 @@ const GroupScreen = () => {
     if (data.photo) {
       try {
         await updateGroupPhoto(currentGroup.id, data.photo);
-    } catch (error) {
+      } catch (error) {
         console.error('Error updating group photo:', error);
       }
     }
@@ -42,36 +42,46 @@ const GroupScreen = () => {
     await deleteGroup(currentGroup.id, userAuth.uid);
   };
 
- 
-
   if (!user?.currentGroup) {
     return (
-      <View className="flex-1 items-center bg-white">
-        <Text className="text-2xl font-bold">Groups</Text>
+      <View className="flex-1 bg-[#151718]">
+        <View className="bg-gray-800/50 p-4 border-b border-gray-700">
+          <Text className="text-2xl font-bold text-white">Group</Text>
+        </View>
         <NoGroup />
       </View>
     );
   }
   
   return (
-    <ScrollView className="flex-1 bg-white">
-      <GroupInfo
-        name={currentGroup?.name || ''}
-        photo={currentGroup?.photo || ''}
-        description={currentGroup?.description || ''}
-        inviteCode={currentGroup?.inviteCode || ''}
-        onUpdate={handleGroupUpdates}
-      />
-      <MembersList 
-        members={currentGroup?.members || {}}
-        adminId={currentGroup?.createdBy || ''}
-      />
-      <GroupActions 
-        adminId={currentGroup?.createdBy || ''}
-        onLeaveGroup={handleLeaveGroup}
-        onDeleteGroup={handleDeleteGroup}
-      />
-    </ScrollView>
+    <View className="flex-1 bg-[#151718]">
+      <View className="bg-gray-800/50 p-4 border-b border-gray-700">
+        <Text className="text-2xl font-bold text-white">Group</Text>
+      </View>
+      
+      <ScrollView 
+        className="flex-1" 
+        showsVerticalScrollIndicator={false}
+      >
+        <GroupInfo
+          name={currentGroup?.name || ''}
+          photo={currentGroup?.photo || ''}
+          description={currentGroup?.description || ''}
+          inviteCode={currentGroup?.inviteCode || ''}
+          onUpdate={handleGroupUpdates}
+        />
+        <MembersList 
+          members={currentGroup?.members || {}}
+          adminId={currentGroup?.createdBy || ''}
+        />
+
+          <GroupActions 
+            adminId={currentGroup?.createdBy || ''}
+            onLeaveGroup={handleLeaveGroup}
+            onDeleteGroup={handleDeleteGroup}
+        />
+      </ScrollView>
+    </View>
   );
 };
 
