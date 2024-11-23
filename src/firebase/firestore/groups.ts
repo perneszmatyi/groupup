@@ -418,4 +418,7 @@ export const deleteGroup = async (groupId: string, userId: string): Promise<void
     console.error('Error deleting group:', error);
     throw error;
   }
+
+
+  
 };

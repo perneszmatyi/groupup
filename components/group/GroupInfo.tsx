@@ -57,7 +57,7 @@ export const GroupInfo = ({
           source={
             photo 
               ? { uri: photo }
-              : require('@/assets/default.png')
+              : require('@/assets/group-default.jpg')
           }
           className="w-32 h-32 rounded-full bg-gray-200"
         />
