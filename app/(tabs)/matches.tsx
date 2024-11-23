@@ -1,14 +1,25 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { useGroupContext } from '@/context/GroupContext';
 import NoGroup from '../../components/group/NoGroup';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
+import { LoadingScreen } from '@/components/screens/LoadingScreen';
 
 const MatchesScreen = () => {
   const { currentGroup, matchedGroups } = useGroupContext();
   const colors = Colors['dark'];
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // ... your existing matches loading logic
+    setIsLoading(false);
+  }, []);
+
+  if (isLoading) {
+    return <LoadingScreen message="Loading matches..." />;
+  }
 
   const renderMatches = () => {
     if (!currentGroup?.matches || Object.keys(currentGroup.matches).length === 0) {

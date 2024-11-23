@@ -5,6 +5,7 @@ import { useAuthContext } from '@/context/AuthContext';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { updateUserProfile, deleteUserAccount } from '@/src/firebase/firestore/users';
+import { LoadingScreen } from '@/components/screens/LoadingScreen';
 
 const ProfileScreen = () => {
   const { user } = useUserContext();
@@ -14,6 +15,14 @@ const ProfileScreen = () => {
   const [lastName, setLastName] = useState(user?.lastName || '');
   const [profilePicture, setProfilePicture] = useState(user?.profilePicture || '');
   const [isLoading, setIsLoading] = useState(false);
+
+  if (!user || !userAuth) {
+    return <LoadingScreen message="Loading profile..." />;
+  }
+
+  if (isLoading) {
+    return <LoadingScreen message="Updating profile..." />;
+  }
 
   const handleUpdateProfile = async () => {
     if (!userAuth?.uid) return;

@@ -5,22 +5,31 @@ import { auth } from '../../firebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
+import { LoadingScreen } from '@/components/screens/LoadingScreen';
 
 const SignIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const colors = Colors['dark'];
 
   const handleSignIn = async () => {
     try {
+      setIsLoading(true);
       setError('');
       await signInWithEmailAndPassword(auth, email, password);
       router.replace('/(tabs)/group');
     } catch (error: any) {
       setError(error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  if (isLoading) {
+    return <LoadingScreen message="Signing in..." />;
+  }
 
   return (
     <SafeAreaView className="flex-1" style={{ backgroundColor: colors.background }}>

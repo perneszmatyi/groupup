@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TextInput, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { LoadingScreen } from '@/components/screens/LoadingScreen';
 
 type GroupInfoProps = {
   name: string;
@@ -25,7 +26,16 @@ export const GroupInfo = ({
   const [newName, setNewName] = useState(name);
   const [newDescription, setNewDescription] = useState(description);
   const [newPhotoUrl, setNewPhotoUrl] = useState(photo || '');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // ... your existing group info loading logic
+    setIsLoading(false);
+  }, []);
+
+  if (isLoading) {
+    return <LoadingScreen message="Loading group info..." />;
+  }
 
   const handleSave = async () => {
     if (!newName.trim()) {

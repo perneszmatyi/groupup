@@ -1,5 +1,5 @@
 import { Slot, useSegments, useRouter } from 'expo-router';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { View, StatusBar } from 'react-native';
 import 'react-native-reanimated';
 import '../global.css';
@@ -8,13 +8,30 @@ import { UserProvider } from '@/context/UserContext';
 import { GroupProvider } from '@/context/GroupContext';
 import { useAuthContext } from '@/context/AuthContext';
 import { Colors } from '@/constants/Colors';
+import { SplashScreen } from '@/components/screens/SplashScreen';
 
 function RootLayoutNav() {
   const { userAuth } = useAuthContext();
   const segments = useSegments();
   const router = useRouter();
+  const [isInitializing, setIsInitializing] = useState(true);
 
   useEffect(() => {
+    const initializeApp = async () => {
+      try {
+        // Add any additional initialization logic here
+        await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate loading
+      } finally {
+        setIsInitializing(false);
+      }
+    };
+
+    initializeApp();
+  }, []);
+
+  useEffect(() => {
+    if (isInitializing) return;
+
     const inAuthGroup = segments[0] === '(auth)';
 
     if (!userAuth && !inAuthGroup) {
@@ -22,7 +39,11 @@ function RootLayoutNav() {
     } else if (userAuth && inAuthGroup) {
       router.replace('/(tabs)/group');
     }
-  }, [userAuth, segments]);
+  }, [userAuth, segments, isInitializing]);
+
+  if (isInitializing) {
+    return <SplashScreen />;
+  }
 
   return (
     <>

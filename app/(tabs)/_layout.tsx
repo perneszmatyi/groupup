@@ -25,11 +25,9 @@ export default function TabLayout() {
             borderTopWidth: 0,
           },
           tabBarItemStyle: {
-            paddingVertical: 4,
           },
           tabBarLabelStyle: {
             fontSize: 12,
-            marginTop: -4,
           },
           tabBarInactiveTintColor: colors.tabIconDefault,
         }}>
