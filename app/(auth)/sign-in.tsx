@@ -22,7 +22,6 @@ const SignIn = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      {/* Back Button - Fixed at top */}
       <TouchableOpacity 
         className="absolute top-12 left-6 z-10" 
         onPress={() => router.replace('/')}
