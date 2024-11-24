@@ -45,11 +45,14 @@ const ProfileScreen = () => {
 
   const handleLogout = async () => {
     try {
+      setIsLoading(true);
       await authLogout();
       router.replace('/');
     } catch (error) {
       console.error('Error signing out:', error);
       Alert.alert('Error', 'Failed to sign out');
+    } finally {
+      setIsLoading(false);
     }
   };
 

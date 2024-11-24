@@ -4,14 +4,17 @@ import { useRouter } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { createFirestoreGroup } from '../../src/firebase/firestore/groups';
 import { auth } from '../../firebaseConfig';
+import { LoadingScreen } from '@/components/screens/LoadingScreen';
 
 const CreateGroup = () => {
   const [groupName, setGroupName] = useState('');
   const [description, setDescription] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleCreateGroup = async () => {
     try {
+      setIsLoading(true);
       const user = auth.currentUser;
       if (!user) return;
       await createFirestoreGroup({
@@ -22,8 +25,14 @@ const CreateGroup = () => {
       router.push('/(tabs)/group');
     } catch (error) {
       console.error('Error creating group: ', error);
-    }
+    } finally {
+      setIsLoading(false);
+    } 
   };
+
+  if (isLoading) {
+    return <LoadingScreen message="Creating group..." />;
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-[#151718]">

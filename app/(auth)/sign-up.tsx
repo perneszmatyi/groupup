@@ -9,6 +9,7 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../firebaseConfig';
 import { createFirestoreUser } from '@/src/firebase/firestore/users';
 import { Colors } from '@/constants/Colors';
+import { LoadingScreen } from '@/components/screens/LoadingScreen';
 
 const SignUp = () => {
   const [step, setStep] = useState(1);
@@ -20,6 +21,7 @@ const SignUp = () => {
     confirmPassword: '',
   });
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const updateFormData = (data: Partial<typeof formData>) => {
     setFormData(prev => ({ ...prev, ...data }));
@@ -28,6 +30,7 @@ const SignUp = () => {
   const handleNextStep = async () => {
     if (step === 3) {
       try {
+        setIsLoading(true);
         if (formData.password !== formData.confirmPassword) {
           setError('Passwords do not match');
           return;
@@ -45,6 +48,8 @@ const SignUp = () => {
         router.replace('/(tabs)/group');
       } catch (error: any) {
         setError(error.message);
+      } finally {
+        setIsLoading(false);
       }
     } else {
       setStep(prev => prev + 1);
@@ -59,6 +64,10 @@ const SignUp = () => {
       router.back();
     }
   };
+
+  if (isLoading) {
+    return <LoadingScreen message="Creating account..." />;
+  }
 
   return (
     <SafeAreaView className="flex-1" style={{ backgroundColor: Colors.dark.background }}>

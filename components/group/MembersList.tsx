@@ -21,10 +21,9 @@ export const MembersList = ({ members, adminId }: MembersListProps) => {
   useEffect(() => {
       const fetchMembers = async () => {
       try {
-        // Get array of user IDs from members object
         const memberIds = Object.keys(members);
         
-        // Fetch user data for each member
+
         const membersData = await Promise.all(
           memberIds.map(id => getUserData(id))
         );

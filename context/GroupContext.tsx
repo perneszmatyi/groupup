@@ -45,7 +45,6 @@ export const GroupProvider = ({ children }: GroupProviderProps) => {
   const { user } = useUserContext();
   const { userAuth } = useAuthContext();
 
-  // Listen to current group
   useEffect(() => {
     setIsLoading(true);
     setError(null);
@@ -67,9 +66,8 @@ export const GroupProvider = ({ children }: GroupProviderProps) => {
           return;
         }
         
-        const groupData = { id: doc.id, ...doc.data() } as GroupData; // doc data doesn't include id by default
+        const groupData = { id: doc.id, ...doc.data() } as GroupData; 
         
-        // Validate group is still active
         if (!groupData.isActive) {
           setError('Group is no longer active');
           setCurrentGroup(null);
@@ -90,7 +88,7 @@ export const GroupProvider = ({ children }: GroupProviderProps) => {
     return () => unsubscribeGroup();
   }, [user?.currentGroup]);
 
-  // Fetch available groups
+
   const loadAvailableGroups = async () => {
     if (!userAuth?.uid || !user?.currentGroup) {
       setAvailableGroups([]);
@@ -113,7 +111,7 @@ export const GroupProvider = ({ children }: GroupProviderProps) => {
     }
   };
 
-  // Load available groups on auth change
+
   useEffect(() => {
     loadAvailableGroups();
   }, [userAuth?.uid, currentGroup?.id]);
@@ -131,20 +129,18 @@ export const GroupProvider = ({ children }: GroupProviderProps) => {
 
       const targetGroup = targetGroups[0] as GroupData;
       
-      // Validate group is active
       if (!targetGroup.isActive) {
         throw new Error('This group is no longer active');
       }
 
       await joinGroup(userAuth.uid, targetGroup.id);
-      await loadAvailableGroups(); // Refresh available groups after joining
+      await loadAvailableGroups();
     } catch (error) {
       console.error('Error joining group:', error);
       throw error;
     }
   };
 
-  // Add effect to load matched groups
   useEffect(() => {
     const loadMatchedGroups = async () => {
       if (!currentGroup?.id) {
@@ -161,7 +157,7 @@ export const GroupProvider = ({ children }: GroupProviderProps) => {
     };
 
     loadMatchedGroups();
-  }, [currentGroup?.id]); // Reload when current group changes
+  }, [currentGroup?.id]);
 
   return (
     <GroupContext.Provider value={{ 

@@ -14,13 +14,10 @@ import {
 import { db } from '../../../firebaseConfig';
 import { ChatData, MessageData } from './types';
 
-// Create a new chat when groups match
 export const createChat = async (groupId1: string, groupId2: string): Promise<string> => {
   try {
-    // Create new chat ID from the two group IDs
     const chatId = [groupId1, groupId2].sort().join('_');
     
-    // Create chat document
     const chatRef = doc(db, 'chats', chatId);
     const chatData: Omit<ChatData, 'id'> = {
       groupId1: groupId1,
@@ -36,7 +33,7 @@ export const createChat = async (groupId1: string, groupId2: string): Promise<st
   }
 };
 
-// Send a new message
+
 export const sendMessage = async (
   chatId: string,
   text: string,
@@ -67,7 +64,6 @@ export const sendMessage = async (
   }
 };
 
-// Get recent messages for a chat
 export const getRecentMessages = async (chatId: string, messageLimit = 50): Promise<MessageData[]> => {
   try {
     const messagesRef = collection(db, 'chats', chatId, 'messages');
@@ -88,7 +84,7 @@ export const getRecentMessages = async (chatId: string, messageLimit = 50): Prom
   }
 };
 
-// Get chat data
+
 export const getChatData = async (chatId: string): Promise<ChatData | null> => {
   try {
     const chatRef = doc(db, 'chats', chatId);

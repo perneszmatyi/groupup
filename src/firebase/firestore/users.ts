@@ -57,7 +57,6 @@ export const updateUserProfile = async (
   data: UpdateUserProfileData
 ): Promise<void> => {
   try {
-    // Validate data
     if (data.firstName !== undefined && data.firstName.trim().length < 1) {
       throw new Error('First name cannot be empty');
     }
@@ -65,15 +64,14 @@ export const updateUserProfile = async (
       throw new Error('Last name cannot be empty');
     }
     if (data.profilePicture !== undefined) {
-      // Validate URL format
-      try {
+      try { 
         new URL(data.profilePicture);
       } catch {
         throw new Error('Invalid profile picture URL');
       }
     }
 
-    // Clean the data object
+
     const cleanData: UpdateUserProfileData = {};
     if (data.firstName !== undefined) {
       cleanData.firstName = data.firstName.trim();
@@ -85,7 +83,7 @@ export const updateUserProfile = async (
       cleanData.profilePicture = data.profilePicture;
     }
 
-    // Update the user document
+
     const userRef = doc(db, 'users', userId);
     await updateDoc(userRef, cleanData);
 

@@ -3,20 +3,28 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView, SafeAreaView } fro
 import { useRouter } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useGroupContext } from '../../context/GroupContext';
-
+import { LoadingScreen } from '@/components/screens/LoadingScreen';
 const JoinGroup = () => {
   const [inviteCode, setInviteCode] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { handleJoinGroup } = useGroupContext();
 
   const handleSubmit = async () => {
     try {
+      setIsLoading(true);
       await handleJoinGroup(inviteCode);
       router.push('/(tabs)/group');
     } catch (error) {
       console.error('Error joining group:', error);
-    }
+    } finally {
+      setIsLoading(false);
+    } 
   };
+
+  if (isLoading) {
+    return <LoadingScreen message="Joining group..." />;
+  } 
 
   return (
     <SafeAreaView className="flex-1 bg-[#151718]">

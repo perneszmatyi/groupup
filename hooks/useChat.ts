@@ -17,7 +17,7 @@ export const useChat = (chatId: string) => {
 
 
 
-  // Set up real-time listener for messages
+
   useEffect(() => {
     setIsLoading(true);
     
@@ -52,7 +52,6 @@ export const useChat = (chatId: string) => {
     }
   }, [chatId]);
 
-  // Send message function
   const handleSendMessage = useCallback(async (text: string) => {
     if (!userAuth || !currentGroup) return;
     

@@ -35,8 +35,8 @@ export const createFirestoreGroup = async (
   try {
     const batch = writeBatch(db);
     
-    const groupCollectionRef = collection(db, 'groups'); //gets the collection
-    const newGroupRef = doc(groupCollectionRef); //gets the document
+    const groupCollectionRef = collection(db, 'groups');
+    const newGroupRef = doc(groupCollectionRef);
     
     const groupDoc = {
       ...groupData,
@@ -53,7 +53,7 @@ export const createFirestoreGroup = async (
 
     batch.set(newGroupRef, groupDoc);
 
-    const userRef = doc(db, 'users', groupData.createdBy); //gets document
+    const userRef = doc(db, 'users', groupData.createdBy);
     batch.update(userRef, {
       currentGroup: newGroupRef.id
     });
@@ -74,30 +74,27 @@ export const fetchActiveGroups = async (
   currentGroupId: string
 ): Promise<GroupData[]> => {
   try {
-    // Get current group's data to check likes/passes/matches
     const currentGroupRef = doc(db, 'groups', currentGroupId);
     const currentGroupDoc = await getDoc(currentGroupRef);
     const currentGroupData = currentGroupDoc.data() as GroupData;
 
-    // Get all active groups
     const q = query(
       collection(db, 'groups'),
       where('isActive', '==', true)
     );
     const querySnapshot = await getDocs(q);
     
-    // Filter and transform the data
     return querySnapshot.docs
       .map(doc => ({
         id: doc.id,
         ...doc.data()
       } as GroupData))
       .filter(group => 
-        group.id !== currentGroupId && // Not own group
-        !group.members[userId] && // Not a member
-        !currentGroupData.likes?.[group.id] && // Haven't liked
-        !currentGroupData.passes?.[group.id] && // Haven't passed
-        !currentGroupData.matches?.[group.id] // Haven't matched
+        group.id !== currentGroupId && 
+        !group.members[userId] && 
+        !currentGroupData.likes?.[group.id] && 
+        !currentGroupData.passes?.[group.id] && 
+        !currentGroupData.matches?.[group.id]
       );
   } catch (error) {
     console.error('Error fetching active groups:', error);
@@ -107,7 +104,6 @@ export const fetchActiveGroups = async (
 
 export const fetchMatchedGroups = async (groupId: string): Promise<GroupData[]> => {
   try {
-    // Get current group to get matches
     const groupRef = doc(db, 'groups', groupId);
     const groupDoc = await getDoc(groupRef);
     const groupData = groupDoc.data() as GroupData;
@@ -116,7 +112,6 @@ export const fetchMatchedGroups = async (groupId: string): Promise<GroupData[]> 
       return [];
     }
 
-    // Get all matched groups data
     const matchedGroupIds = Object.keys(groupData.matches);
     const matchedGroups = await Promise.all(
       matchedGroupIds.map(async (matchedGroupId) => {
@@ -168,14 +163,13 @@ export const joinGroup = async (userId: string, groupId: string) => {
       throw new Error('Group not found');
     }
 
-    // Verify user exists
     const userRef = doc(db, 'users', userId);
     const userDoc = await getDoc(userRef);
     if (!userDoc.exists()) {
       throw new Error('User not found');
     }
 
-    // Check if user is already in group
+
     const groupData = groupDoc.data();
     if (groupData.members && groupData.members[userId]) {
       throw new Error('User is already a member of this group');
@@ -213,24 +207,21 @@ export const getGroupByCreatorId = async (creatorId: string): Promise<GroupData[
 export const handleLike = async (
   currentGroupId: string, 
   targetGroupId: string
-): Promise<boolean> => {  // Returns true if it's a match
+): Promise<boolean> => {
   try {
     const batch = writeBatch(db);
     
-    // Get both groups
     const currentGroupRef = doc(db, 'groups', currentGroupId);
     const targetGroupRef = doc(db, 'groups', targetGroupId);
     
-    // Get target group data to check if they already liked current group
     const targetGroupDoc = await getDoc(targetGroupRef);
     const targetGroupData = targetGroupDoc.data() as GroupData;
-
-    // Store the like
+    
     batch.update(currentGroupRef, {
       [`likes.${targetGroupId}`]: true
     });
 
-    // If target group already liked current group, create match
+
     if (targetGroupData.likes?.[currentGroupId]) {
       batch.update(currentGroupRef, {
         [`matches.${targetGroupId}`]: true
@@ -239,10 +230,10 @@ export const handleLike = async (
         [`matches.${currentGroupId}`]: true
       });
       await batch.commit();
-      return true; // It's a match
+      return true; 
     }
 
-    // If no match, just save the like
+
     await batch.commit();
     return false;
   } catch (error) {

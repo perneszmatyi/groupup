@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import NoGroup from '../../components/group/NoGroup';
 import { useUserContext } from '@/context/UserContext';
@@ -8,38 +8,60 @@ import { updateGroupPhoto, updateGroupInfo, leaveGroup, deleteGroup } from '@/sr
 import { MembersList } from '@/components/group/MembersList';
 import { GroupActions } from '@/components/group/GroupActions';
 import { useAuthContext } from '@/context/AuthContext';
+import { LoadingScreen } from '@/components/screens/LoadingScreen';
 
 const GroupScreen = () => {
   const { user } = useUserContext();
   const { userAuth } = useAuthContext();
   const { currentGroup } = useGroupContext();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleGroupUpdates = async (data: { name?: string; description?: string; photo?: string }) => {
-    if (!currentGroup) return;
+    if (!currentGroup) return; 
     if (data.photo) {
       try {
+        setIsLoading(true);
         await updateGroupPhoto(currentGroup.id, data.photo);
       } catch (error) {
         console.error('Error updating group photo:', error);
+      } finally {
+        setIsLoading(false);
       }
     }
     if (data.name || data.description) {
       try {
+        setIsLoading(true);
         await updateGroupInfo(currentGroup.id, data);
       } catch (error) {
         console.error('Error updating group:', error);
+      } finally {
+        setIsLoading(false);
       }
     }
   };
 
   const handleLeaveGroup = async () => {
     if (!currentGroup || !userAuth?.uid) return;
-    await leaveGroup(currentGroup.id, userAuth.uid);
+    try {
+      setIsLoading(true);
+      await leaveGroup(currentGroup.id, userAuth.uid);
+    } catch (error) {
+      console.error('Error leaving group:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleDeleteGroup = async () => {
     if (!currentGroup || !userAuth?.uid) return;
-    await deleteGroup(currentGroup.id, userAuth.uid);
+    try {
+      setIsLoading(true);
+      await deleteGroup(currentGroup.id, userAuth.uid);
+    } catch (error) {
+      console.error('Error deleting group:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (!user?.currentGroup) {
@@ -51,6 +73,10 @@ const GroupScreen = () => {
         <NoGroup />
       </View>
     );
+  }
+  
+  if (isLoading) {
+    return <LoadingScreen message="Loading group..." />;
   }
   
   return (

@@ -7,6 +7,7 @@ import { fetchActiveGroups, handleLike, handlePass } from '@/src/firebase/firest
 import { GroupData } from '@/src/firebase/firestore/types';
 import { LinearGradient } from 'expo-linear-gradient';
 import NoGroup from '@/components/group/NoGroup';
+import { LoadingScreen } from '@/components/screens/LoadingScreen';
 const { width, height } = Dimensions.get('window');
 
 const NonAdminView = () => (
@@ -95,16 +96,7 @@ const SwipeScreen = () => {
   }
 
   if (isLoading) {
-    return (
-      <View className="flex-1 bg-[#151718]">
-        <View className="bg-gray-800/50 p-4 border-b border-gray-700">
-          <Text className="text-2xl font-bold text-white">Swipe</Text>
-        </View>
-        <View className="flex-1 justify-center items-center">
-          <Text className="text-white">Loading groups...</Text>
-        </View>
-      </View>
-    );
+    return <LoadingScreen message="Loading groups..." />;
   }
 
   if (groups.length === 0 || currentIndex >= groups.length) {

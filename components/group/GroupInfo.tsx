@@ -28,11 +28,6 @@ export const GroupInfo = ({
   const [newPhotoUrl, setNewPhotoUrl] = useState(photo || '');
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    // ... your existing group info loading logic
-    setIsLoading(false);
-  }, []);
-
   if (isLoading) {
     return <LoadingScreen message="Loading group info..." />;
   }

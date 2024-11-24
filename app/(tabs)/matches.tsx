@@ -13,7 +13,6 @@ const MatchesScreen = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // ... your existing matches loading logic
     setIsLoading(false);
   }, []);
 
