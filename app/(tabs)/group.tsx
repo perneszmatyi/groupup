@@ -9,6 +9,7 @@ import { MembersList } from '@/components/group/MembersList';
 import { GroupActions } from '@/components/group/GroupActions';
 import { useAuthContext } from '@/context/AuthContext';
 import { LoadingScreen } from '@/components/screens/LoadingScreen';
+import { router } from 'expo-router';
 
 const GroupScreen = () => {
   const { user } = useUserContext();
@@ -57,7 +58,8 @@ const GroupScreen = () => {
     if (!currentGroup || !userAuth?.uid) return;
     try {
       setIsLoading(true);
-      await deleteGroup(currentGroup.id, userAuth.uid);
+      await deleteGroup(currentGroup.id);
+      router.replace('/(tabs)');
     } catch (error) {
       console.error('Error deleting group:', error);
     } finally {

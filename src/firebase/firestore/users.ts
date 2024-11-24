@@ -115,7 +115,7 @@ export const deleteUserAccount = async (userId: string): Promise<void> => {
         
 
         if (groupData.createdBy === userId) {
-          await deleteGroup(userData.currentGroup, userId);
+          await deleteGroup(userData.currentGroup);
         } else {
 
           await leaveGroup(userData.currentGroup, userId);

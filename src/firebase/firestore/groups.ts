@@ -347,7 +347,7 @@ export const leaveGroup = async (groupId: string, userId: string): Promise<void>
 };
 
 
-export const deleteGroup = async (groupId: string, userId: string): Promise<void> => {
+export const deleteGroup = async (groupId: string): Promise<void> => {
   try {
     const groupRef = doc(db, 'groups', groupId);
     const groupSnap = await getDoc(groupRef);
@@ -358,10 +358,6 @@ export const deleteGroup = async (groupId: string, userId: string): Promise<void
 
     const groupData = groupSnap.data();
     
-    if (groupData.createdBy !== userId) {
-      throw new Error('Only admin can delete group');
-    }
-
     const memberIds = Object.keys(groupData.members);
     await Promise.all(
       memberIds.map(memberId => 

@@ -4,7 +4,7 @@ import { createContext, useContext, ReactNode, useState, useEffect } from 'react
 import { useUserContext } from './UserContext';
 import { db } from '@/firebaseConfig';
 import { onSnapshot } from 'firebase/firestore';
-import { fetchActiveGroups, fetchMatchedGroups } from '@/src/firebase/firestore/groups';
+import { deleteGroup, fetchActiveGroups, fetchMatchedGroups } from '@/src/firebase/firestore/groups';
 import { useAuthContext } from './AuthContext';
 import { joinGroup, getGroupByInviteCode } from '@/src/firebase/firestore/groups';
 
@@ -45,6 +45,70 @@ export const GroupProvider = ({ children }: GroupProviderProps) => {
   const { user } = useUserContext();
   const { userAuth } = useAuthContext();
 
+
+
+  const loadAvailableGroups = async () => {
+    if (!userAuth?.uid || !user?.currentGroup) {
+      setAvailableGroups([]);
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const groups = await fetchActiveGroups(userAuth.uid, user.currentGroup);
+      setAvailableGroups(groups);
+    } catch (error) {
+      console.error('Error fetching active groups:', error);
+      setError(error instanceof Error ? error.message : 'Failed to fetch groups');
+      setAvailableGroups([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleJoinGroup = async (inviteCode: string) => {
+    if (!userAuth?.uid) {
+      throw new Error('User must be authenticated to join a group');
+    }
+
+    try {
+      const targetGroups = await getGroupByInviteCode(inviteCode);
+      if (targetGroups.length === 0) {
+        throw new Error('Invalid invite code');
+      }
+
+      const targetGroup = targetGroups[0] as GroupData;
+      
+
+      await joinGroup(userAuth.uid, targetGroup.id);
+      await loadAvailableGroups();
+    } catch (error) {
+      console.error('Error joining group:', error);
+      throw error;
+    }
+  };
+
+  const checkAndDeleteOldGroups = async () => {
+    if (!currentGroup) return;
+  
+    try {
+      const cutoffTime = new Date();
+      cutoffTime.setHours(cutoffTime.getHours() - 24);
+  
+      if (currentGroup.createdAt < cutoffTime) {
+        if (userAuth?.uid === currentGroup.createdBy) {
+          await deleteGroup(currentGroup.id);
+        }
+      }
+    } catch (error) {
+      console.error('Error checking group age:', error);
+    }
+  };
+
+
   useEffect(() => {
     setIsLoading(true);
     setError(null);
@@ -83,56 +147,11 @@ export const GroupProvider = ({ children }: GroupProviderProps) => {
   }, [user?.currentGroup]);
 
 
-  const loadAvailableGroups = async () => {
-    if (!userAuth?.uid || !user?.currentGroup) {
-      setAvailableGroups([]);
-      setIsLoading(false);
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const groups = await fetchActiveGroups(userAuth.uid, user.currentGroup);
-      setAvailableGroups(groups);
-    } catch (error) {
-      console.error('Error fetching active groups:', error);
-      setError(error instanceof Error ? error.message : 'Failed to fetch groups');
-      setAvailableGroups([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-
   useEffect(() => {
     loadAvailableGroups();
   }, [userAuth?.uid, currentGroup?.id]);
 
-  const handleJoinGroup = async (inviteCode: string) => {
-    if (!userAuth?.uid) {
-      throw new Error('User must be authenticated to join a group');
-    }
-
-    try {
-      const targetGroups = await getGroupByInviteCode(inviteCode);
-      if (targetGroups.length === 0) {
-        throw new Error('Invalid invite code');
-      }
-
-      const targetGroup = targetGroups[0] as GroupData;
-      
-    
-
-      await joinGroup(userAuth.uid, targetGroup.id);
-      await loadAvailableGroups();
-    } catch (error) {
-      console.error('Error joining group:', error);
-      throw error;
-    }
-  };
-
+  
   useEffect(() => {
     const loadMatchedGroups = async () => {
       if (!currentGroup?.id) {
@@ -150,6 +169,47 @@ export const GroupProvider = ({ children }: GroupProviderProps) => {
 
     loadMatchedGroups();
   }, [currentGroup?.id]);
+
+  useEffect(() => {
+    setIsLoading(true);
+    setError(null);
+  
+    if (!user?.currentGroup) {
+      setCurrentGroup(null);
+      setIsLoading(false);
+      return;
+    }
+  
+    const groupRef = doc(db, 'groups', user.currentGroup);
+    const unsubscribeGroup = onSnapshot(
+      groupRef,
+      { includeMetadataChanges: false },
+      async (doc) => {
+        if (!doc.exists()) {
+          setError('Group not found');
+          setCurrentGroup(null);
+          return;
+        }
+        
+        const groupData = { id: doc.id, ...doc.data() } as GroupData; 
+        
+
+        await checkAndDeleteOldGroups();
+  
+        setCurrentGroup(groupData);
+        setError(null);
+      },
+      (error) => {
+        console.error('Group listener error:', error);
+        setError(error.message);
+        setCurrentGroup(null);
+      }
+    );
+  
+    setIsLoading(false);
+    return () => unsubscribeGroup();
+  }, [user?.currentGroup]);
+  
 
   return (
     <GroupContext.Provider value={{ 
