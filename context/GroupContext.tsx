@@ -67,12 +67,6 @@ export const GroupProvider = ({ children }: GroupProviderProps) => {
         }
         
         const groupData = { id: doc.id, ...doc.data() } as GroupData; 
-        
-        if (!groupData.isActive) {
-          setError('Group is no longer active');
-          setCurrentGroup(null);
-          return;
-        }
 
         setCurrentGroup(groupData);
         setError(null);
@@ -129,9 +123,7 @@ export const GroupProvider = ({ children }: GroupProviderProps) => {
 
       const targetGroup = targetGroups[0] as GroupData;
       
-      if (!targetGroup.isActive) {
-        throw new Error('This group is no longer active');
-      }
+    
 
       await joinGroup(userAuth.uid, targetGroup.id);
       await loadAvailableGroups();

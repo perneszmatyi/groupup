@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import NoGroup from '../../components/group/NoGroup';
 import { useUserContext } from '@/context/UserContext';
@@ -15,6 +15,7 @@ const GroupScreen = () => {
   const { userAuth } = useAuthContext();
   const { currentGroup } = useGroupContext();
   const [isLoading, setIsLoading] = useState(false);
+
 
   const handleGroupUpdates = async (data: { name?: string; description?: string; photo?: string }) => {
     if (!currentGroup) return; 

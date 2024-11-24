@@ -35,8 +35,13 @@ const SwipeScreen = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    loadGroups();
-  }, []);
+    if (currentGroup?.isActive) {
+      loadGroups();
+    } else {
+      setIsLoading(false);
+      console.log('currentGroup', currentGroup);
+    }
+  }, [currentGroup?.isActive]);
 
   const loadGroups = async () => {
     if (!currentGroup?.id) return;
@@ -73,6 +78,8 @@ const SwipeScreen = () => {
     }
   };
 
+
+
   if (!currentGroup) {
     return (
       <View className="flex-1 bg-[#151718]">
@@ -97,6 +104,43 @@ const SwipeScreen = () => {
 
   if (isLoading) {
     return <LoadingScreen message="Loading groups..." />;
+  }
+
+  if (!currentGroup?.isActive) {
+    return (
+      <View className="flex-1 bg-[#151718]">
+        <View className="bg-gray-800/50 p-4 border-b border-gray-700">
+          <Text className="text-2xl font-bold text-white">Swipe</Text>
+        </View>
+  
+        <View className="flex-1 justify-center items-center px-6">
+          <View className="items-center mb-12">
+            <View className="bg-gray-800/50 p-6 rounded-full mb-6">
+              <Ionicons 
+                name="people-outline" 
+                size={48} 
+                color="#60A5FA"
+              />
+            </View>
+            <Text className="text-white text-2xl font-bold mb-3 text-center">
+              Group Not Active
+            </Text>
+            <Text className="text-gray-400 text-center text-base">
+              You need at least 2 members to activate your group
+            </Text>
+          </View>
+  
+          <View className="w-full">
+            <View className="bg-gray-800/50 p-4 rounded-xl items-center border border-gray-700">
+              <Text className="text-sm text-gray-400 mb-2">Share this invite code</Text>
+              <Text className="font-mono text-2xl tracking-wider text-blue-400">
+                {currentGroup.inviteCode}
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+    );
   }
 
   if (groups.length === 0 || currentIndex >= groups.length) {

@@ -30,7 +30,7 @@ const isValidImageUrl = (url: string): boolean => {
 };
 
 export const createFirestoreGroup = async (
-  groupData: Omit<GroupData, 'id' | 'inviteCode' | 'isActive' | 'createdAt' | 'members' >
+  groupData: Omit<GroupData, 'id' | 'inviteCode' | 'isActive' | 'createdAt' | 'members' | 'memberCount'>
 ) => {
   try {
     const batch = writeBatch(db);
@@ -41,14 +41,15 @@ export const createFirestoreGroup = async (
     const groupDoc = {
       ...groupData,
       inviteCode: await generateUniqueInviteCode(),
-      isActive: true,
+      isActive: false,
       createdAt: new Date(),
       members: {
         [groupData.createdBy]: true
       },
       likes: {},
       passes: {},
-      matches: {}
+      matches: {},
+      memberCount: 1
     };
 
     batch.set(newGroupRef, groupDoc);
@@ -176,8 +177,11 @@ export const joinGroup = async (userId: string, groupId: string) => {
     }
 
     batch.update(groupRef, {
-      [`members.${userId}`]: true
+      [`members.${userId}`]: true,
+      memberCount: groupData.memberCount + 1,
+      isActive: true
     });
+
 
     batch.update(userRef, {
       currentGroup: groupId
@@ -326,7 +330,9 @@ export const leaveGroup = async (groupId: string, userId: string): Promise<void>
     delete updatedMembers[userId];
 
     await updateDoc(groupRef, {
-      members: updatedMembers
+      members: updatedMembers,
+      memberCount: groupData.memberCount - 1,
+      isActive: (groupData.memberCount - 1) > 1, 
     });
 
     const userRef = doc(db, 'users', userId);

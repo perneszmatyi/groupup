@@ -26,7 +26,7 @@ export const GroupInfo = ({
   const [newName, setNewName] = useState(name);
   const [newDescription, setNewDescription] = useState(description);
   const [newPhotoUrl, setNewPhotoUrl] = useState(photo || '');
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   if (isLoading) {
     return <LoadingScreen message="Loading group info..." />;
@@ -37,7 +37,6 @@ export const GroupInfo = ({
       Alert.alert('Error', 'Group name cannot be empty');
       return;
     }
-
     setIsLoading(true);
     try {
       await onUpdate({
